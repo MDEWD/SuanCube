@@ -1,0 +1,152 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .site-layout-background {
+    background: #fff;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 24px;
+  }
+  
+  .header-actions {
+    margin-left: auto;
+  }
+  
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .tags-container {
+    margin-top: 12px;
+  }
+  
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag-item {
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  
+  .post-content-preview {
+    color: rgba(0, 0, 0, 0.7);
+    margin: 12px 0;
+  }
+  
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 16px 0;
+  }
+  
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .answer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .code-block {
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    margin: 12px 0;
+  }
+  
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .code-content {
+    padding: 12px;
+    margin: 0;
+    background: #fafafa;
+    overflow-x: auto;
+  }
+  
+  .preview-area {
+    min-height: 200px;
+    padding: 16px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      padding: 12px;
+    }
+    
+    .logo {
+      margin-bottom: 12px;
+    }
+    
+    .filters {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .post-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .post-header {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .answer-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
