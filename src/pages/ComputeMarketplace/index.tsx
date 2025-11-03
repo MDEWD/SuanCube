@@ -1,0 +1,847 @@
+import React, { useState } from 'react';
+import { 
+  Card, 
+  Row, 
+  Col, 
+  Tag, 
+  Button, 
+  Checkbox, 
+  Radio, 
+  Divider, 
+  Typography, 
+  Space, 
+  Rate,
+  Tabs,
+  Badge,
+  Statistic,
+  Tooltip,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Upload,
+  message,
+  Descriptions,
+  Image,
+  InputNumber
+} from 'antd';
+import { 
+  ShoppingCartOutlined, 
+  HeartOutlined, 
+  StarFilled,
+  ThunderboltFilled,
+  CalendarOutlined,
+  CrownFilled,
+  PlusOutlined,
+  UploadOutlined,
+  EnvironmentOutlined
+} from '@ant-design/icons';
+
+const { Title, Text } = Typography;
+const { TabPane } = Tabs;
+const { Option } = Select;
+const { TextArea } = Input;
+
+// 类型定义
+interface GPUInstance {
+  id: string;
+  name: string;
+  model: string;
+  availableUntil: string;
+  rating: number;
+  gpuAvailable: number;
+  gpuTotal: number;
+  cpu: string;
+  memory: string;
+  systemDisk: string;
+  dataDisk: string;
+  maxCudaVersion: string;
+  price: number;
+  tags: string[];
+  isHot?: boolean;
+  isNew?: boolean;
+  region: string;
+  gpuCountType: string;
+  bandwidth: string;
+  driverVersion: string;
+  // 新增字段
+  applicationScenes?: string[];
+  dataCenterLocation?: string;
+  dataCenterImages?: string[];
+  isNewDataCenter?: boolean;
+  dataCenterDescription?: string;
+}
+
+// 发布商品表单数据类型
+interface PublishFormData {
+  gpuType: string;
+  gpuModel: string;
+  cpu: string;
+  memory: string;
+  storage: string;
+  bandwidth: string;
+  location: string;
+  applicationScenes: string[];
+  isNewDataCenter: boolean;
+  dataCenterDescription: string;
+  price: number;
+  images: any[];
+}
+
+const ComputeMarketplace: React.FC = () => {
+  const [selectedGPUType, setSelectedGPUType] = useState<string[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
+  const [selectedGPUCount, setSelectedGPUCount] = useState<string>('all');
+  const [publishModalVisible, setPublishModalVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<GPUInstance | null>(null);
+  const [form] = Form.useForm();
+
+  // 筛选选项
+  const gpuTypes = [
+    'A10-24G',
+    'A30-24G', 
+    'H100-80GB',
+    'A800-80GB',
+    'A100-80GB',
+    'A6000-48G',
+    'RTX 3060',
+    'A100-40GB',
+    'L40-48G'
+  ];
+
+  const regions = ['华中', '华东', '华北', '华南', '西南'];
+  const gpuCounts = ['all', '8卡', '4卡', '2卡', '1卡', '其他'];
+
+  // 应用场景选项
+  const applicationScenesOptions = [
+    { label: 'AI训练', value: 'AI训练' },
+    { label: 'AI推理', value: 'AI推理' },
+    { label: '图形渲染', value: '图形渲染' }
+  ];
+
+  // 实例数据
+  const gpuInstances: GPUInstance[] = [
+    {
+      id: '1',
+      name: 'NVIDIA GeForce RTX 3060',
+      model: 'RTX3060-12G',
+      machineCode: 'MACHz6YyvKV75rTNrWB3MqZ',
+      availableUntil: '2025-12-20',
+      rating: 4,
+      gpuAvailable: 1,
+      gpuTotal: 8,
+      cpu: 'Intel Xeon E5-2673 v4',
+      memory: '64GB DDR4',
+      systemDisk: '20G',
+      dataDisk: '50GB NVME',
+      maxCudaVersion: '12.2',
+      price: 0.24,
+      tags: ['高可用', 'NVLink', '免费带宽'],
+      region: '华东',
+      gpuCountType: '8卡',
+      bandwidth: '800 Mbps',
+      driverVersion: '550.144.03',
+      applicationScenes: ['AI训练', '图形渲染'],
+      dataCenterLocation: '上海',
+      dataCenterImages: [
+        'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+      ],
+      isNewDataCenter: false,
+      dataCenterDescription: '稳定可靠的机房环境，多年运营经验'
+    },
+    {
+      id: '2',
+      name: 'NVIDIA GeForce RTX 3060',
+      model: 'RTX3060-12G',
+      availableUntil: '2025-12-21',
+      rating: 4,
+      gpuAvailable: 1,
+      gpuTotal: 8,
+      cpu: 'Intel Xeon E5-2680 v4',
+      memory: '128GB DDR4',
+      systemDisk: '20G',
+      dataDisk: '50GB NVME',
+      maxCudaVersion: '12.1',
+      price: 0.26,
+      tags: ['免费带宽', '推荐'],
+      isHot: true,
+      region: '华中',
+      gpuCountType: '8卡',
+      bandwidth: '800 Mbps',
+      driverVersion: '550.144.03',
+      applicationScenes: ['AI推理'],
+      dataCenterLocation: '武汉',
+      dataCenterImages: [
+        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+      ],
+      isNewDataCenter: true,
+      dataCenterDescription: '全新机房，采用最新制冷技术，节能环保'
+    },
+    {
+      id: '3',
+      name: 'NVIDIA A100-80GB',
+      model: 'A100-80GB',
+      availableUntil: '2026-01-05',
+      rating: 5,
+      gpuAvailable: 2,
+      gpuTotal: 4,
+      cpu: 'Intel Xeon Gold 6338',
+      memory: '256GB DDR4',
+      systemDisk: '50G',
+      dataDisk: '200GB NVME',
+      maxCudaVersion: '12.4',
+      price: 1.2,
+      tags: ['高配', 'NVLink', '限时特价', '新机房'],
+      isNew: true,
+      region: '华北',
+      gpuCountType: '4卡',
+      bandwidth: '1000 Mbps',
+      driverVersion: '550.144.03',
+      applicationScenes: ['AI训练', 'AI推理'],
+      dataCenterLocation: '北京',
+      dataCenterImages: [
+        'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop',
+        'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop'
+      ],
+      isNewDataCenter: true,
+      dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障'
+    }
+  ];
+
+  // 筛选逻辑
+  const filteredInstances = gpuInstances.filter(instance => {
+    // GPU类型筛选
+    if (selectedGPUType.length > 0 && !selectedGPUType.some(type => 
+      instance.name.includes(type) || instance.model.includes(type))) {
+      return false;
+    }
+    
+    // 地区筛选
+    if (selectedRegion.length > 0 && !selectedRegion.includes(instance.region)) {
+      return false;
+    }
+    
+    // GPU数量筛选
+    if (selectedGPUCount !== 'all' && instance.gpuCountType !== selectedGPUCount) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  // 处理发布商品
+  const handlePublish = async (values: PublishFormData) => {
+    try {
+      console.log('发布商品数据:', values);
+      message.success('商品发布成功！');
+      setPublishModalVisible(false);
+      form.resetFields();
+    } catch (error) {
+      message.error('发布失败，请重试');
+    }
+  };
+
+  // 查看详情
+  const handleViewDetail = (product: GPUInstance) => {
+    setSelectedProduct(product);
+    setDetailModalVisible(true);
+  };
+
+  // 上传图片前的验证
+  const beforeUpload = (file: File) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('只能上传 JPG/PNG 格式的图片!');
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error('图片必须小于 5MB!');
+    }
+    return isJpgOrPng && isLt5M;
+  };
+
+    // 自定义标签样式
+  const tabStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    padding: '12px 24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  } as React.CSSProperties;
+
+  return (
+    <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
+      
+      {/* 顶部专区标签和发布按钮 */}
+      <Card style={{ marginBottom: '16px' }}>
+        <div >
+    <Tabs 
+          defaultActiveKey="lease" 
+          centered
+          size="large"
+          style={{ 
+            fontSize: '18px',
+          }}
+          tabBarStyle={{
+            fontSize: '18px',
+            fontWeight: 'bold'
+          }}
+        >
+            <TabPane 
+              tab={
+                 <div style={tabStyle}>
+                  <ThunderboltFilled style={{ marginRight: '8px' }} />
+                  租赁专区
+                </div>
+              } 
+              key="lease"
+            />
+            <TabPane 
+              tab={
+                 <div style={tabStyle}>
+                  <ShoppingCartOutlined style={{ marginRight: '8px' }} />
+                  采购专区
+                </div>
+              } 
+              key="purchase" 
+            />
+            <TabPane 
+              tab={
+                 <div style={tabStyle}>
+                  <CrownFilled style={{ marginRight: '8px' }} />
+                  官方推荐
+                </div>
+              } 
+              key="official-recommend" 
+            />
+          </Tabs>
+          
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />}
+            onClick={() => setPublishModalVisible(true)}
+            style={{ marginLeft: '16px' }}
+          >
+            发布商品
+          </Button>
+        </div>
+      </Card>
+
+      <Row gutter={16}>
+        {/* 左侧筛选面板 */}
+        <Col xs={24} md={6}>
+          <Card title="筛选条件" style={{ marginBottom: '16px' }}>
+            {/* 显卡类型筛选 */}
+            <div style={{ marginBottom: '20px' }}>
+              <Title level={5}>显卡类型</Title>
+              <Checkbox.Group 
+                style={{ display: 'flex', flexDirection: 'column' }}
+                value={selectedGPUType}
+                onChange={setSelectedGPUType}
+              >
+                {gpuTypes.map(type => (
+                  <Checkbox key={type} value={type} style={{ margin: '4px 0' }}>
+                    {type}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
+            </div>
+
+            <Divider />
+
+            {/* 地区筛选 */}
+            <div style={{ marginBottom: '20px' }}>
+              <Title level={5}>地区</Title>
+              <Checkbox.Group 
+                style={{ display: 'flex', flexDirection: 'column' }}
+                value={selectedRegion}
+                onChange={setSelectedRegion}
+              >
+                {regions.map(region => (
+                  <Checkbox key={region} value={region} style={{ margin: '4px 0' }}>
+                    {region}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
+            </div>
+
+            <Divider />
+
+            {/* 显卡数量筛选 */}
+            <div style={{ marginBottom: '20px' }}>
+              <Title level={5}>显卡数量</Title>
+              <Radio.Group 
+                value={selectedGPUCount}
+                onChange={e => setSelectedGPUCount(e.target.value)}
+                style={{ display: 'flex', flexDirection: 'column' }}
+              >
+                {gpuCounts.map(count => (
+                  <Radio key={count} value={count} style={{ margin: '4px 0' }}>
+                    {count === 'all' ? '全部' : count}
+                  </Radio>
+                ))}
+              </Radio.Group>
+            </div>
+          </Card>
+        </Col>
+
+        {/* 右侧卡片式实例列表 */}
+        <Col xs={24} md={18}>
+          <Row gutter={[16, 16]}>
+            {filteredInstances.map(instance => (
+              <Col xs={24} sm={12} xl={8} key={instance.id}>
+                <Card
+                  style={{ 
+                    height: '100%',
+                    position: 'relative',
+                    transition: 'all 0.3s',
+                  }}
+                  bodyStyle={{ padding: '16px' }}
+                  hoverable
+                  className="gpu-instance-card"
+                >
+                  {/* 热卖/新标签 */}
+                  {instance.isHot && (
+                    <Badge.Ribbon text="热卖" color="red">
+                      <div></div>
+                    </Badge.Ribbon>
+                  )}
+                  {instance.isNew && (
+                    <Badge.Ribbon text="新机房" color="green">
+                      <div></div>
+                    </Badge.Ribbon>
+                  )}
+
+                  {/* 卡片头部 - 名称和基本信息 */}
+                  <div style={{ marginBottom: '12px' }}>
+                    <Row justify="space-between" align="top">
+                      <Col flex="auto">
+                        <Title level={4} style={{ margin: 0, fontSize: '16px' }}>
+                          {instance.name}
+                        </Title>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                          {instance.model}
+                        </Text>
+                      </Col>
+                    </Row>
+                    
+                    <div style={{ marginTop: '8px' }}>
+                      <Space wrap size={[0, 4]}>
+                        {instance.tags.map(tag => (
+                          <Tag 
+                            key={tag} 
+                            color={
+                              tag === '限时特价' ? 'red' : 
+                              tag === '推荐' ? 'orange' : 
+                              tag === '免费带宽' ? 'green' : 'blue'
+                            }
+                            style={{ fontSize: '10px', margin: 0, marginRight: '4px' }}
+                          >
+                            {tag}
+                          </Tag>
+                        ))}
+                      </Space>
+                    </div>
+                  </div>
+
+                  {/* 机器码和评分 */}
+                  <div style={{ marginBottom: '12px' }}>
+                    <Row justify="space-between" align="middle">
+                      <Col>
+                        <Space size="small">
+                          <Rate 
+                            disabled 
+                            defaultValue={instance.rating} 
+                            style={{ fontSize: '12px' }} 
+                            character={<StarFilled />}
+                          />
+                          <Text strong style={{ fontSize: '12px' }}>
+                            {instance.rating}
+                          </Text>
+                        </Space>
+                      </Col>
+                    </Row>
+                  </div>
+
+                  {/* 关键配置信息 */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <Row gutter={[8, 8]}>
+                      <Col span={12}>
+                        <Statistic
+                          title="GPU可用/总数"
+                          value={`${instance.gpuAvailable}/${instance.gpuTotal}`}
+                          valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <Statistic
+                          title="显存"
+                          value={instance.memory.split(' ')[0]}
+                          valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <Statistic
+                          title="CUDA版本"
+                          value={instance.maxCudaVersion}
+                          valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <Statistic
+                          title="带宽"
+                          value={instance.bandwidth}
+                          valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
+                        />
+                      </Col>
+                    </Row>
+                  </div>
+
+                  {/* 详细配置折叠信息 */}
+                  <div style={{ marginBottom: '16px', padding: '8px', background: '#f9f9f9', borderRadius: '4px' }}>
+                    <Row gutter={[4, 4]}>
+                      <Col span={24}>
+                        <Text strong style={{ fontSize: '12px' }}>CPU: </Text>
+                        <Text style={{ fontSize: '12px' }}>{instance.cpu}</Text>
+                      </Col>
+                      <Col span={24}>
+                        <Text strong style={{ fontSize: '12px' }}>存储: </Text>
+                        <Text style={{ fontSize: '12px' }}>
+                          系统盘 {instance.systemDisk} + 数据盘 {instance.dataDisk}
+                        </Text>
+                      </Col>
+                      <Col span={24}>
+                        <Text strong style={{ fontSize: '12px' }}>驱动: </Text>
+                        <Text style={{ fontSize: '12px' }}>{instance.driverVersion}</Text>
+                      </Col>
+                    </Row>
+                  </div>
+
+                  {/* 价格和操作区域 */}
+                  <Divider style={{ margin: '12px 0' }} />
+                  <Row justify="space-between" align="middle">
+                    <Col>
+                      <div>
+                        <Text type="secondary" style={{ fontSize: '10px' }}>
+                          0.3小时起 · 非黄金会员价
+                        </Text>
+                        <div>
+                          <Text style={{ 
+                            fontSize: '20px', 
+                            color: '#ff4d4f', 
+                            fontWeight: 'bold',
+                            lineHeight: '1.2'
+                          }}>
+                            ￥{instance.price}
+                            <Text style={{ fontSize: '12px', fontWeight: 'normal' }}>/小时</Text>
+                          </Text>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col>
+                      <Space direction="vertical" size="small">
+                        <Button 
+                          type="primary" 
+                          size="small" 
+                          icon={<ShoppingCartOutlined />}
+                        >
+                          立即租
+                        </Button>
+                        <Button 
+                          type="text" 
+                          size="small" 
+                          icon={<HeartOutlined />}
+                          style={{ padding: '0', height: 'auto' }}
+                        >
+                          <Text style={{ fontSize: '10px' }}>收藏</Text>
+                        </Button>
+                        <Button 
+                          type="link" 
+                          size="small"
+                          onClick={() => handleViewDetail(instance)}
+                          style={{ padding: '0', height: 'auto', fontSize: '10px' }}
+                        >
+                          查看详情
+                        </Button>
+                      </Space>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+      </Row>
+
+      {/* 发布商品模态框 */}
+      <Modal
+        title="发布商品"
+        open={publishModalVisible}
+        onCancel={() => setPublishModalVisible(false)}
+        footer={null}
+        width={800}
+        centered
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handlePublish}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="GPU类型"
+                name="gpuType"
+                rules={[{ required: true, message: '请选择GPU类型' }]}
+              >
+                <Select placeholder="选择GPU类型">
+                  {gpuTypes.map(type => (
+                    <Option key={type} value={type}>{type}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="GPU型号"
+                name="gpuModel"
+                rules={[{ required: true, message: '请输入GPU型号' }]}
+              >
+                <Input placeholder="例如：RTX3060-12G" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Title level={5}>配置详情</Title>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="CPU"
+                name="cpu"
+                rules={[{ required: true, message: '请输入CPU信息' }]}
+              >
+                <Input placeholder="例如：Intel Xeon E5-2673 v4" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="内存"
+                name="memory"
+                rules={[{ required: true, message: '请输入内存信息' }]}
+              >
+                <Input placeholder="例如：64GB DDR4" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="数据存储"
+                name="storage"
+                rules={[{ required: true, message: '请输入存储信息' }]}
+              >
+                <Input placeholder="例如：系统盘 20G + 数据盘 50GB NVME" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="带宽"
+                name="bandwidth"
+                rules={[{ required: true, message: '请输入带宽信息' }]}
+              >
+                <Input placeholder="例如：800 Mbps" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="机房坐标"
+                name="location"
+                rules={[{ required: true, message: '请输入机房坐标' }]}
+              >
+                <Input placeholder="例如：上海" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item
+            label="机房环境图片"
+            name="images"
+          >
+            <Upload
+              listType="picture-card"
+              beforeUpload={beforeUpload}
+              multiple
+            >
+              <div>
+                <UploadOutlined />
+                <div style={{ marginTop: 8 }}>上传图片</div>
+              </div>
+            </Upload>
+          </Form.Item>
+
+          <Form.Item
+            label="推荐应用场景"
+            name="applicationScenes"
+            rules={[{ required: true, message: '请选择应用场景' }]}
+          >
+            <Checkbox.Group options={applicationScenesOptions} />
+          </Form.Item>
+
+          <Form.Item
+            name="isNewDataCenter"
+            valuePropName="checked"
+          >
+            <Checkbox>新机房</Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            label="机房自荐评语"
+            name="dataCenterDescription"
+            rules={[
+              { required: true, message: '请输入机房评语' },
+              { max: 50, message: '评语不能超过50个字' }
+            ]}
+          >
+            <TextArea 
+              placeholder="请输入机房自荐评语（最多50字）" 
+              rows={3}
+              showCount
+              maxLength={50}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="目标价格（元/小时）"
+            name="price"
+            rules={[{ required: true, message: '请输入目标价格' }]}
+          >
+            <InputNumber
+              style={{ width: '100%' }}
+              min={0}
+              step={0.01}
+              placeholder="请输入价格"
+              formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            />
+          </Form.Item>
+
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
+            <Button onClick={() => setPublishModalVisible(false)} style={{ marginRight: 8 }}>
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit">
+              发布商品
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 商品详情模态框 */}
+      <Modal
+        title="商品详情"
+        open={detailModalVisible}
+        onCancel={() => setDetailModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setDetailModalVisible(false)}>
+            关闭
+          </Button>,
+          <Button key="rent" type="primary" icon={<ShoppingCartOutlined />}>
+            立即租赁
+          </Button>
+        ]}
+        width={800}
+        centered
+      >
+        {selectedProduct && (
+          <div>
+            {/* 商品基本信息 */}
+            <Descriptions title="基础信息" bordered column={2}>
+              <Descriptions.Item label="GPU类型">{selectedProduct.name}</Descriptions.Item>
+              <Descriptions.Item label="GPU型号">{selectedProduct.model}</Descriptions.Item>
+              <Descriptions.Item label="可用性">
+                {selectedProduct.gpuAvailable}/{selectedProduct.gpuTotal}
+              </Descriptions.Item>
+              <Descriptions.Item label="价格" span={2}>
+                <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
+                  ￥{selectedProduct.price}/小时
+                </Text>
+              </Descriptions.Item>
+            </Descriptions>
+
+            {/* 配置详情 */}
+            <Divider />
+            <Title level={5}>配置详情</Title>
+            <Descriptions bordered column={2}>
+              <Descriptions.Item label="CPU">{selectedProduct.cpu}</Descriptions.Item>
+              <Descriptions.Item label="内存">{selectedProduct.memory}</Descriptions.Item>
+              <Descriptions.Item label="数据存储">
+                系统盘 {selectedProduct.systemDisk} + 数据盘 {selectedProduct.dataDisk}
+              </Descriptions.Item>
+              <Descriptions.Item label="带宽">{selectedProduct.bandwidth}</Descriptions.Item>
+              <Descriptions.Item label="CUDA版本">{selectedProduct.maxCudaVersion}</Descriptions.Item>
+              <Descriptions.Item label="驱动版本">{selectedProduct.driverVersion}</Descriptions.Item>
+            </Descriptions>
+
+            {/* 应用场景 */}
+            <Divider />
+            <Title level={5}>推荐应用场景</Title>
+            <Space wrap>
+              {selectedProduct.applicationScenes?.map(scene => (
+                <Tag key={scene} color="blue">{scene}</Tag>
+              ))}
+            </Space>
+
+            {/* 机房信息 */}
+            <Divider />
+            <Title level={5}>机房信息</Title>
+            <Descriptions bordered>
+              <Descriptions.Item label="机房坐标" span={3}>
+                <Space>
+                  <EnvironmentOutlined />
+                  {selectedProduct.dataCenterLocation}
+                  {selectedProduct.isNewDataCenter && (
+                    <Tag color="green">新机房</Tag>
+                  )}
+                </Space>
+              </Descriptions.Item>
+              <Descriptions.Item label="机房评语" span={3}>
+                {selectedProduct.dataCenterDescription}
+              </Descriptions.Item>
+            </Descriptions>
+
+            {/* 机房环境图片 */}
+            {selectedProduct.dataCenterImages && selectedProduct.dataCenterImages.length > 0 && (
+              <>
+                <Divider />
+                <Title level={5}>机房环境</Title>
+                <Image.PreviewGroup>
+                  <Row gutter={[8, 8]}>
+                    {selectedProduct.dataCenterImages.map((img, index) => (
+                      <Col span={8} key={index}>
+                        <Image
+                          src={img}
+                          alt={`机房环境 ${index + 1}`}
+                          style={{ borderRadius: '6px' }}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                </Image.PreviewGroup>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      <style jsx>{`
+        .gpu-instance-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default ComputeMarketplace;

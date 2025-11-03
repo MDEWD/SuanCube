@@ -12,7 +12,7 @@ export default [
   { path: '/partner/apply', icon: 'smile', component: './PartnerPage/Apply'},
   { path: '/community', icon: 'smile', component: './Community'},
   { path: '/solution', icon: 'smile', component: './UniversitySolution'},
-  { path: '/market', icon: 'smile', component: './ComputeMarket'},
+  { path: '/market', icon: 'smile', component: './ComputeMarketplace'},
   { path: '/help', icon: 'smile', component: './HelpDocumentation'},
   {
     path: '/admin',

@@ -111,7 +111,7 @@ const ProductDisplay: React.FC = () => {
                     </Text>
                   </div>
                   
-                  <div style={{ 
+                  {/* <div style={{ 
                     display: 'flex', 
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -123,7 +123,7 @@ const ProductDisplay: React.FC = () => {
                       <EyeOutlined style={{ fontSize: '12px', marginRight: '4px' }} />
                       <span>{product.views}</span>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </Card>
             </Col>
