@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'umi';
 import { 
   Card, 
   Row, 
@@ -21,8 +22,6 @@ import {
   Select,
   Upload,
   message,
-  Descriptions,
-  Image,
   InputNumber
 } from 'antd';
 import { 
@@ -30,11 +29,10 @@ import {
   HeartOutlined, 
   StarFilled,
   ThunderboltFilled,
-  CalendarOutlined,
   CrownFilled,
   PlusOutlined,
   UploadOutlined,
-  EnvironmentOutlined
+  EyeOutlined
 } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -64,7 +62,6 @@ interface GPUInstance {
   gpuCountType: string;
   bandwidth: string;
   driverVersion: string;
-  // 新增字段
   applicationScenes?: string[];
   dataCenterLocation?: string;
   dataCenterImages?: string[];
@@ -88,30 +85,111 @@ interface PublishFormData {
   images: any[];
 }
 
+// 实例数据
+export const gpuInstances: GPUInstance[] = [
+  {
+    id: '1',
+    name: 'NVIDIA GeForce RTX 3060',
+    model: 'RTX3060-12G',
+    availableUntil: '2025-12-20',
+    rating: 4,
+    gpuAvailable: 1,
+    gpuTotal: 8,
+    cpu: 'Intel Xeon E5-2673 v4',
+    memory: '64GB DDR4',
+    systemDisk: '20G',
+    dataDisk: '50GB NVME',
+    maxCudaVersion: '12.2',
+    price: 3000,
+    tags: ['高可用', 'NVLink', '免费带宽'],
+    region: '华东',
+    gpuCountType: '8卡',
+    bandwidth: '800 Mbps',
+    driverVersion: '550.144.03',
+    applicationScenes: ['AI训练', '图形渲染'],
+    dataCenterLocation: '上海',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: false,
+    dataCenterDescription: '稳定可靠的机房环境，多年运营经验'
+  },
+  {
+    id: '2',
+    name: 'NVIDIA GeForce RTX 3060',
+    model: 'RTX3060-12G',
+    availableUntil: '2025-12-21',
+    rating: 4,
+    gpuAvailable: 1,
+    gpuTotal: 8,
+    cpu: 'Intel Xeon E5-2680 v4',
+    memory: '128GB DDR4',
+    systemDisk: '20G',
+    dataDisk: '50GB NVME',
+    maxCudaVersion: '12.1',
+    price: 3100,
+    tags: ['免费带宽', '推荐'],
+    isHot: true,
+    region: '华中',
+    gpuCountType: '8卡',
+    bandwidth: '800 Mbps',
+    driverVersion: '550.144.03',
+    applicationScenes: ['AI推理'],
+    dataCenterLocation: '武汉',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: true,
+    dataCenterDescription: '全新机房，采用最新制冷技术，节能环保'
+  },
+  {
+    id: '3',
+    name: 'NVIDIA A100-80GB',
+    model: 'A100-80GB',
+    availableUntil: '2026-01-05',
+    rating: 5,
+    gpuAvailable: 2,
+    gpuTotal: 4,
+    cpu: 'Intel Xeon Gold 6338',
+    memory: '256GB DDR4',
+    systemDisk: '50G',
+    dataDisk: '200GB NVME',
+    maxCudaVersion: '12.4',
+    price: 3210,
+    tags: ['高配', 'NVLink', '限时特价', '新机房'],
+    isNew: true,
+    region: '华北',
+    gpuCountType: '4卡',
+    bandwidth: '1000 Mbps',
+    driverVersion: '550.144.03',
+    applicationScenes: ['AI训练', 'AI推理'],
+    dataCenterLocation: '北京',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: true,
+    dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障'
+  }
+];
+
 const ComputeMarketplace: React.FC = () => {
   const [selectedGPUType, setSelectedGPUType] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedGPUCount, setSelectedGPUCount] = useState<string>('all');
   const [publishModalVisible, setPublishModalVisible] = useState(false);
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<GPUInstance | null>(null);
   const [form] = Form.useForm();
 
   // 筛选选项
   const gpuTypes = [
-    'A10-24G',
-    'A30-24G', 
-    'H100-80GB',
-    'A800-80GB',
-    'A100-80GB',
-    'A6000-48G',
-    'RTX 3060',
-    'A100-40GB',
-    'L40-48G'
+    '华为',
+    '英伟达',
   ];
 
   const regions = ['华中', '华东', '华北', '华南', '西南'];
-  const gpuCounts = ['all', '8卡', '4卡', '2卡', '1卡', '其他'];
+  const gpuCounts = ['all', '8卡', '1卡', '其他'];
 
   // 应用场景选项
   const applicationScenesOptions = [
@@ -120,111 +198,17 @@ const ComputeMarketplace: React.FC = () => {
     { label: '图形渲染', value: '图形渲染' }
   ];
 
-  // 实例数据
-  const gpuInstances: GPUInstance[] = [
-    {
-      id: '1',
-      name: 'NVIDIA GeForce RTX 3060',
-      model: 'RTX3060-12G',
-      machineCode: 'MACHz6YyvKV75rTNrWB3MqZ',
-      availableUntil: '2025-12-20',
-      rating: 4,
-      gpuAvailable: 1,
-      gpuTotal: 8,
-      cpu: 'Intel Xeon E5-2673 v4',
-      memory: '64GB DDR4',
-      systemDisk: '20G',
-      dataDisk: '50GB NVME',
-      maxCudaVersion: '12.2',
-      price: 0.24,
-      tags: ['高可用', 'NVLink', '免费带宽'],
-      region: '华东',
-      gpuCountType: '8卡',
-      bandwidth: '800 Mbps',
-      driverVersion: '550.144.03',
-      applicationScenes: ['AI训练', '图形渲染'],
-      dataCenterLocation: '上海',
-      dataCenterImages: [
-        'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
-        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
-      ],
-      isNewDataCenter: false,
-      dataCenterDescription: '稳定可靠的机房环境，多年运营经验'
-    },
-    {
-      id: '2',
-      name: 'NVIDIA GeForce RTX 3060',
-      model: 'RTX3060-12G',
-      availableUntil: '2025-12-21',
-      rating: 4,
-      gpuAvailable: 1,
-      gpuTotal: 8,
-      cpu: 'Intel Xeon E5-2680 v4',
-      memory: '128GB DDR4',
-      systemDisk: '20G',
-      dataDisk: '50GB NVME',
-      maxCudaVersion: '12.1',
-      price: 0.26,
-      tags: ['免费带宽', '推荐'],
-      isHot: true,
-      region: '华中',
-      gpuCountType: '8卡',
-      bandwidth: '800 Mbps',
-      driverVersion: '550.144.03',
-      applicationScenes: ['AI推理'],
-      dataCenterLocation: '武汉',
-      dataCenterImages: [
-        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
-      ],
-      isNewDataCenter: true,
-      dataCenterDescription: '全新机房，采用最新制冷技术，节能环保'
-    },
-    {
-      id: '3',
-      name: 'NVIDIA A100-80GB',
-      model: 'A100-80GB',
-      availableUntil: '2026-01-05',
-      rating: 5,
-      gpuAvailable: 2,
-      gpuTotal: 4,
-      cpu: 'Intel Xeon Gold 6338',
-      memory: '256GB DDR4',
-      systemDisk: '50G',
-      dataDisk: '200GB NVME',
-      maxCudaVersion: '12.4',
-      price: 1.2,
-      tags: ['高配', 'NVLink', '限时特价', '新机房'],
-      isNew: true,
-      region: '华北',
-      gpuCountType: '4卡',
-      bandwidth: '1000 Mbps',
-      driverVersion: '550.144.03',
-      applicationScenes: ['AI训练', 'AI推理'],
-      dataCenterLocation: '北京',
-      dataCenterImages: [
-        'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
-        'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop',
-        'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop'
-      ],
-      isNewDataCenter: true,
-      dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障'
-    }
-  ];
-
   // 筛选逻辑
   const filteredInstances = gpuInstances.filter(instance => {
-    // GPU类型筛选
     if (selectedGPUType.length > 0 && !selectedGPUType.some(type => 
       instance.name.includes(type) || instance.model.includes(type))) {
       return false;
     }
     
-    // 地区筛选
     if (selectedRegion.length > 0 && !selectedRegion.includes(instance.region)) {
       return false;
     }
     
-    // GPU数量筛选
     if (selectedGPUCount !== 'all' && instance.gpuCountType !== selectedGPUCount) {
       return false;
     }
@@ -244,12 +228,6 @@ const ComputeMarketplace: React.FC = () => {
     }
   };
 
-  // 查看详情
-  const handleViewDetail = (product: GPUInstance) => {
-    setSelectedProduct(product);
-    setDetailModalVisible(true);
-  };
-
   // 上传图片前的验证
   const beforeUpload = (file: File) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -263,7 +241,7 @@ const ComputeMarketplace: React.FC = () => {
     return isJpgOrPng && isLt5M;
   };
 
-    // 自定义标签样式
+  // 自定义标签样式
   const tabStyle = {
     fontSize: '18px',
     fontWeight: 'bold',
@@ -278,19 +256,16 @@ const ComputeMarketplace: React.FC = () => {
       
       {/* 顶部专区标签和发布按钮 */}
       <Card style={{ marginBottom: '16px' }}>
-        <div >
-    <Tabs 
-          defaultActiveKey="lease" 
-          centered
-          size="large"
-          style={{ 
-            fontSize: '18px',
-          }}
-          tabBarStyle={{
-            fontSize: '18px',
-            fontWeight: 'bold'
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Tabs 
+            defaultActiveKey="lease" 
+            centered
+            size="large"
+            tabBarStyle={{
+              fontSize: '18px',
+              fontWeight: 'bold'
+            }}
+          >
             <TabPane 
               tab={
                  <div style={tabStyle}>
@@ -399,6 +374,8 @@ const ComputeMarketplace: React.FC = () => {
                     height: '100%',
                     position: 'relative',
                     transition: 'all 0.3s',
+                    borderRadius: '12px',
+                    overflow: 'hidden'
                   }}
                   bodyStyle={{ padding: '16px' }}
                   hoverable
@@ -472,28 +449,28 @@ const ComputeMarketplace: React.FC = () => {
                     <Row gutter={[8, 8]}>
                       <Col span={12}>
                         <Statistic
-                          title="GPU可用/总数"
+                          title="GPU"
                           value={`${instance.gpuAvailable}/${instance.gpuTotal}`}
                           valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
                         />
                       </Col>
                       <Col span={12}>
                         <Statistic
-                          title="显存"
+                          title="内存"
                           value={instance.memory.split(' ')[0]}
                           valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
                         />
                       </Col>
                       <Col span={12}>
                         <Statistic
-                          title="CUDA版本"
+                          title="系统盘"
                           value={instance.maxCudaVersion}
                           valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
                         />
                       </Col>
                       <Col span={12}>
                         <Statistic
-                          title="带宽"
+                          title="公网带宽"
                           value={instance.bandwidth}
                           valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
                         />
@@ -509,13 +486,17 @@ const ComputeMarketplace: React.FC = () => {
                         <Text style={{ fontSize: '12px' }}>{instance.cpu}</Text>
                       </Col>
                       <Col span={24}>
-                        <Text strong style={{ fontSize: '12px' }}>存储: </Text>
+                        <Text strong style={{ fontSize: '12px' }}>高速网卡: </Text>
                         <Text style={{ fontSize: '12px' }}>
-                          系统盘 {instance.systemDisk} + 数据盘 {instance.dataDisk}
+                          可配
                         </Text>
                       </Col>
                       <Col span={24}>
                         <Text strong style={{ fontSize: '12px' }}>驱动: </Text>
+                        <Text style={{ fontSize: '12px' }}>{instance.driverVersion}</Text>
+                      </Col>
+                      <Col span={24}>
+                        <Text strong style={{ fontSize: '12px' }}>集群存储: </Text>
                         <Text style={{ fontSize: '12px' }}>{instance.driverVersion}</Text>
                       </Col>
                     </Row>
@@ -523,53 +504,114 @@ const ComputeMarketplace: React.FC = () => {
 
                   {/* 价格和操作区域 */}
                   <Divider style={{ margin: '12px 0' }} />
-                  <Row justify="space-between" align="middle">
-                    <Col>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '10px' }}>
-                          0.3小时起 · 非黄金会员价
-                        </Text>
-                        <div>
-                          <Text style={{ 
-                            fontSize: '20px', 
-                            color: '#ff4d4f', 
-                            fontWeight: 'bold',
-                            lineHeight: '1.2'
-                          }}>
-                            ￥{instance.price}
-                            <Text style={{ fontSize: '12px', fontWeight: 'normal' }}>/小时</Text>
-                          </Text>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col>
-                      <Space direction="vertical" size="small">
+                  
+                  {/* 价格显示 */}
+                  <div style={{ marginBottom: '12px', textAlign: 'center' }}>
+                    <Text style={{ 
+                      fontSize: '24px', 
+                      color: '#ff4d4f', 
+                      fontWeight: 'bold',
+                      lineHeight: '1.2'
+                    }}>
+                      ￥{instance.price}
+                      <Text style={{ fontSize: '14px', fontWeight: 'normal' }}>/月</Text>
+                    </Text>
+                  </div>
+
+                  {/* 操作按钮区域 - 水平布局 */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
+                    {/* 立即租按钮 - 主要操作 */}
+                    <Button 
+                      type="primary" 
+                      icon={<ShoppingCartOutlined />}
+                      style={{ 
+                        flex: 2,
+                        height: '36px',
+                        borderRadius: '6px',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                      }}
+                    >
+                      立即租
+                    </Button>
+                    
+                    {/* 收藏按钮 */}
+                    <Tooltip title="收藏">
+                      <Button 
+                        type="default"
+                        icon={<HeartOutlined />}
+                        style={{ 
+                          flex: 1,
+                          height: '36px',
+                          borderRadius: '6px',
+                          minWidth: '40px'
+                        }}
+                      />
+                    </Tooltip>
+                    
+                    {/* 查看详情按钮 */}
+                    <Tooltip title="查看详情">
+                      <Link to={`/market/product/${instance.id}`}>
                         <Button 
-                          type="primary" 
-                          size="small" 
-                          icon={<ShoppingCartOutlined />}
-                        >
-                          立即租
-                        </Button>
+                          type="default"
+                          icon={<EyeOutlined />}
+                          style={{ 
+                            flex: 1,
+                            height: '36px',
+                            borderRadius: '6px',
+                            minWidth: '40px'
+                          }}
+                        />
+                      </Link>
+                    </Tooltip>
+                  </div>
+
+                  {/* 或者使用这种布局：主要按钮在上，次要按钮在下 */}
+                  {/* 
+                  <Space direction="vertical" style={{ width: '100%' }} size="small">
+                    <Button 
+                      type="primary" 
+                      icon={<ShoppingCartOutlined />}
+                      style={{ 
+                        width: '100%',
+                        height: '36px',
+                        borderRadius: '6px',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                      }}
+                    >
+                      立即租赁
+                    </Button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
+                      <Button 
+                        type="text" 
+                        icon={<HeartOutlined />}
+                        style={{ 
+                          flex: 1,
+                          height: '32px',
+                          borderRadius: '6px',
+                          fontSize: '12px'
+                        }}
+                      >
+                        收藏
+                      </Button>
+                      <Link to={`/market/product/${instance.id}`} style={{ flex: 1 }}>
                         <Button 
-                          type="text" 
-                          size="small" 
-                          icon={<HeartOutlined />}
-                          style={{ padding: '0', height: 'auto' }}
-                        >
-                          <Text style={{ fontSize: '10px' }}>收藏</Text>
-                        </Button>
-                        <Button 
-                          type="link" 
-                          size="small"
-                          onClick={() => handleViewDetail(instance)}
-                          style={{ padding: '0', height: 'auto', fontSize: '10px' }}
+                          type="text"
+                          icon={<EyeOutlined />}
+                          style={{ 
+                            width: '100%',
+                            height: '32px',
+                            borderRadius: '6px',
+                            fontSize: '12px'
+                          }}
                         >
                           查看详情
                         </Button>
-                      </Space>
-                    </Col>
-                  </Row>
+                      </Link>
+                    </div>
+                  </Space>
+                  */}
                 </Card>
               </Col>
             ))}
@@ -713,7 +755,7 @@ const ComputeMarketplace: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label="目标价格（元/小时）"
+            label="目标价格（元/月）"
             name="price"
             rules={[{ required: true, message: '请输入目标价格' }]}
           >
@@ -737,107 +779,10 @@ const ComputeMarketplace: React.FC = () => {
         </Form>
       </Modal>
 
-      {/* 商品详情模态框 */}
-      <Modal
-        title="商品详情"
-        open={detailModalVisible}
-        onCancel={() => setDetailModalVisible(false)}
-        footer={[
-          <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            关闭
-          </Button>,
-          <Button key="rent" type="primary" icon={<ShoppingCartOutlined />}>
-            立即租赁
-          </Button>
-        ]}
-        width={800}
-        centered
-      >
-        {selectedProduct && (
-          <div>
-            {/* 商品基本信息 */}
-            <Descriptions title="基础信息" bordered column={2}>
-              <Descriptions.Item label="GPU类型">{selectedProduct.name}</Descriptions.Item>
-              <Descriptions.Item label="GPU型号">{selectedProduct.model}</Descriptions.Item>
-              <Descriptions.Item label="可用性">
-                {selectedProduct.gpuAvailable}/{selectedProduct.gpuTotal}
-              </Descriptions.Item>
-              <Descriptions.Item label="价格" span={2}>
-                <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
-                  ￥{selectedProduct.price}/小时
-                </Text>
-              </Descriptions.Item>
-            </Descriptions>
-
-            {/* 配置详情 */}
-            <Divider />
-            <Title level={5}>配置详情</Title>
-            <Descriptions bordered column={2}>
-              <Descriptions.Item label="CPU">{selectedProduct.cpu}</Descriptions.Item>
-              <Descriptions.Item label="内存">{selectedProduct.memory}</Descriptions.Item>
-              <Descriptions.Item label="数据存储">
-                系统盘 {selectedProduct.systemDisk} + 数据盘 {selectedProduct.dataDisk}
-              </Descriptions.Item>
-              <Descriptions.Item label="带宽">{selectedProduct.bandwidth}</Descriptions.Item>
-              <Descriptions.Item label="CUDA版本">{selectedProduct.maxCudaVersion}</Descriptions.Item>
-              <Descriptions.Item label="驱动版本">{selectedProduct.driverVersion}</Descriptions.Item>
-            </Descriptions>
-
-            {/* 应用场景 */}
-            <Divider />
-            <Title level={5}>推荐应用场景</Title>
-            <Space wrap>
-              {selectedProduct.applicationScenes?.map(scene => (
-                <Tag key={scene} color="blue">{scene}</Tag>
-              ))}
-            </Space>
-
-            {/* 机房信息 */}
-            <Divider />
-            <Title level={5}>机房信息</Title>
-            <Descriptions bordered>
-              <Descriptions.Item label="机房坐标" span={3}>
-                <Space>
-                  <EnvironmentOutlined />
-                  {selectedProduct.dataCenterLocation}
-                  {selectedProduct.isNewDataCenter && (
-                    <Tag color="green">新机房</Tag>
-                  )}
-                </Space>
-              </Descriptions.Item>
-              <Descriptions.Item label="机房评语" span={3}>
-                {selectedProduct.dataCenterDescription}
-              </Descriptions.Item>
-            </Descriptions>
-
-            {/* 机房环境图片 */}
-            {selectedProduct.dataCenterImages && selectedProduct.dataCenterImages.length > 0 && (
-              <>
-                <Divider />
-                <Title level={5}>机房环境</Title>
-                <Image.PreviewGroup>
-                  <Row gutter={[8, 8]}>
-                    {selectedProduct.dataCenterImages.map((img, index) => (
-                      <Col span={8} key={index}>
-                        <Image
-                          src={img}
-                          alt={`机房环境 ${index + 1}`}
-                          style={{ borderRadius: '6px' }}
-                        />
-                      </Col>
-                    ))}
-                  </Row>
-                </Image.PreviewGroup>
-              </>
-            )}
-          </div>
-        )}
-      </Modal>
-
       <style jsx>{`
         .gpu-instance-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
       `}</style>
     </div>

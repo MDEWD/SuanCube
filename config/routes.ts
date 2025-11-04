@@ -12,7 +12,8 @@ export default [
   { path: '/partner/apply', icon: 'smile', component: './PartnerPage/Apply'},
   { path: '/community', icon: 'smile', component: './Community'},
   { path: '/solution', icon: 'smile', component: './UniversitySolution'},
-  { path: '/market', icon: 'smile', component: './ComputeMarketplace'},
+  { path: '/market', icon: 'smile', component: './ComputeMarketplace/index' },
+  { path: '/market/product/:id', icon: 'smile', component: './ComputeMarketplace/ProductDetail' },
   { path: '/help', icon: 'smile', component: './HelpDocumentation'},
   {
     path: '/admin',
