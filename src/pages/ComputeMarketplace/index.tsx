@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'umi';
+import { Link, history } from 'umi';
 import { 
   Card, 
   Row, 
@@ -375,11 +375,13 @@ const ComputeMarketplace: React.FC = () => {
                     position: 'relative',
                     transition: 'all 0.3s',
                     borderRadius: '12px',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    cursor: 'pointer'
                   }}
                   bodyStyle={{ padding: '16px' }}
                   hoverable
                   className="gpu-instance-card"
+                  onClick={() => history.push(`/market/product/${instance.id}`)}
                 >
                   {/* 热卖/新标签 */}
                   {instance.isHot && (
@@ -531,6 +533,7 @@ const ComputeMarketplace: React.FC = () => {
                         fontWeight: 'bold',
                         fontSize: '14px'
                       }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       立即租
                     </Button>
@@ -546,6 +549,7 @@ const ComputeMarketplace: React.FC = () => {
                           borderRadius: '6px',
                           minWidth: '40px'
                         }}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     </Tooltip>
                     
