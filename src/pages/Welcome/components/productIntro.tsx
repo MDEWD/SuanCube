@@ -1,15 +1,19 @@
-import { Space, Typography, Button } from 'antd';
+import { Space, Typography, Button, Grid } from 'antd';
 import React from 'react';
 import { RocketOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const ProductIntro: React.FC = () => {
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
+  
   return (
     <div style={{ 
       width: '100%',
       height: '100%',
-      padding: '24px',
+      padding: isMobile ? '16px' : '24px',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       borderRadius: '12px',
       position: 'relative',
@@ -57,7 +61,7 @@ const ProductIntro: React.FC = () => {
           <Title level={1} style={{ 
             marginBottom: '16px',
             color: '#fff',
-            fontSize: '24px',
+            fontSize: isMobile ? '20px' : '24px',
             fontWeight: 'bold',
             lineHeight: 1.2
           }}>

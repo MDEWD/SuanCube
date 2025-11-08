@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { 
   CloudOutlined, 
   DatabaseOutlined, 
@@ -9,13 +10,19 @@ import {
   RightOutlined,
   NotificationOutlined,
   RocketOutlined,
-  SafetyOutlined
+  SafetyOutlined,
+  MenuOutlined
 } from '@ant-design/icons';
-import { Button, Popover, List, Tag, Typography } from 'antd';
+import { Button, Popover, List, Tag, Typography, Drawer, Grid } from 'antd';
+
+const { useBreakpoint } = Grid;
 
 const Header: React.FC = () => {
   const { Text } = Typography;
   const navigate = useNavigate(); // 获取navigate对象用于路由跳转
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
   
   // 最新更新数据
   const updatesData = [
@@ -101,112 +108,206 @@ const Header: React.FC = () => {
   );
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '16px 24px',
-      backgroundColor: '#fff',
-      borderBottom: '1px solid #f0f0f0',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-      height: '80px'
-    }}>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px',cursor: 'pointer' }}
-       onClick={() => handleNavClick('/welcome')}
+    <>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '12px 16px',
+        backgroundColor: '#fff',
+        borderBottom: '1px solid #f0f0f0',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        minHeight: '60px'
+      }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+         onClick={() => handleNavClick('/welcome')}
+        >
+          <div style={{
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#000'
+          }}>
+            SUANQ
+          </div>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: 'bold',
+            color: '#333'
+          }}>
+            算立方
+          </div>
+        </div>
+
+        {/* 桌面端导航菜单 */}
+        {!isMobile && (
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          {navItems.map(item => (
+            <div 
+              key={item.key} 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                padding: '6px 10px',
+                borderRadius: '6px',
+                transition: 'all 0.3s'
+              }}
+              onClick={() => handleNavClick(item.path)}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
+              }}
+            >
+              {item.icon}
+              <span style={{ fontSize: '13px', color: '#333' }}>{item.label}</span>
+            </div>
+          ))}
+          {/* 通知图标 */}
+          <Popover
+            content={updatesContent}
+            title={null}
+            trigger="hover"
+            placement="bottomRight"
+            overlayStyle={{ padding: 0 }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                padding: '6px 10px',
+                borderRadius: '6px',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
+              }}
+            >
+              <NotificationOutlined style={{ fontSize: '16px', color: '#333' }} />
+            </div>
+          </Popover>
+        </div>
+        )}
+
+        {/* 移动端菜单按钮和用户操作 */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {isMobile && (
+            <>
+              {/* 移动端通知图标 */}
+              <Popover
+                content={updatesContent}
+                title={null}
+                trigger="click"
+                placement="bottomRight"
+                overlayStyle={{ padding: 0 }}
+              >
+                <Button
+                  type="text"
+                  icon={<NotificationOutlined style={{ fontSize: '18px' }} />}
+                  style={{ padding: '4px 8px' }}
+                />
+              </Popover>
+              
+              {/* 移动端菜单按钮 */}
+              <Button
+                type="text"
+                icon={<MenuOutlined style={{ fontSize: '18px' }} />}
+                onClick={() => setDrawerVisible(true)}
+                style={{ padding: '4px 8px' }}
+              />
+            </>
+          )}
+          
+          {/* 桌面端登录按钮 */}
+          {!isMobile && (
+            <Button 
+              type="primary" 
+              icon={<RightOutlined />}
+              onClick={() => navigate('/user/login')}
+              style={{
+                background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '4px 12px',
+                height: '36px',
+                fontSize: '12px',
+                fontWeight: '500',
+                minWidth: '80px',
+                alignItems: 'center'
+              }}
+            >
+              登录/注册
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* 移动端抽屉菜单 */}
+      <Drawer
+        title="菜单"
+        placement="right"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        width={280}
       >
-        <div style={{
-          fontSize: '20px',
-          fontWeight: 'bold',
-          color: '#000'
-        }}>
-          SUANQ
-        </div>
-        <div style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-          color: '#333'
-        }}>
-          算立方
-        </div>
-      </div>
-
-      {/* 导航菜单 */}
-      <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-        {navItems.map(item => (
-          <div 
-            key={item.key} 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              transition: 'all 0.3s'
-            }}
-            onClick={() => handleNavClick(item.path)} // 添加点击事件
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
-            }}
-          >
-            {item.icon}
-            <span style={{ fontSize: '14px', color: '#333' }}>{item.label}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {navItems.map(item => (
+            <div
+              key={item.key}
+              onClick={() => {
+                handleNavClick(item.path);
+                setDrawerVisible(false);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                cursor: 'pointer',
+                borderRadius: '8px',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
+              }}
+            >
+              {item.icon}
+              <span style={{ fontSize: '15px', color: '#333' }}>{item.label}</span>
+            </div>
+          ))}
+          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f0f0f0' }}>
+            <Button 
+              type="primary" 
+              block
+              icon={<RightOutlined />}
+              onClick={() => {
+                navigate('/user/login');
+                setDrawerVisible(false);
+              }}
+              style={{
+                background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
+                border: 'none',
+                height: '40px',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              登录/注册
+            </Button>
           </div>
-        ))}
-        {/* 通知图标 */}
-        <Popover
-          content={updatesContent}
-          title={null}
-          trigger="hover"
-          placement="bottomRight"
-          overlayStyle={{ padding: 0 }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              transition: 'all 0.3s'
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
-            }}
-          >
-            <NotificationOutlined style={{ fontSize: '18px', color: '#333' }} />
-          </div>
-        </Popover>
-      </div>
-
-      {/* 用户操作 */}
-      <div style={{ display: 'flex', gap: '1px' }}>
-        <Button 
-          type="primary" 
-          icon={<RightOutlined />}
-          onClick={() => navigate('/user/login')}
-          style={{
-            background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
-            border: 'none',
-            borderRadius: '20px',
-            padding: '6px 16px',
-            height: '40px',
-            fontSize: '13px',
-            fontWeight: '500',
-            minWidth: '100px'
-          }}
-        >
-          登录/注册
-        </Button>
-      </div>
-    </div>
+        </div>
+      </Drawer>
+    </>
   );
 };
 

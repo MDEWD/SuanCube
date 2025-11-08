@@ -22,8 +22,12 @@ import {
   Select,
   Upload,
   message,
-  InputNumber
+  InputNumber,
+  Grid,
+  Drawer
 } from 'antd';
+
+const { useBreakpoint } = Grid;
 import { 
   ShoppingCartOutlined, 
   HeartOutlined, 
@@ -274,7 +278,10 @@ const ComputeMarketplace: React.FC = () => {
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedGPUCount, setSelectedGPUCount] = useState<string>('all');
   const [publishModalVisible, setPublishModalVisible] = useState(false);
+  const [filterDrawerVisible, setFilterDrawerVisible] = useState(false);
   const [form] = Form.useForm();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   // 筛选选项
   const gpuTypes = [
@@ -365,28 +372,85 @@ const ComputeMarketplace: React.FC = () => {
     justifyContent: 'center'
   } as React.CSSProperties;
 
+  // 筛选面板内容
+  const filterPanel = (
+    <>
+      {/* 显卡类型筛选 */}
+      <div style={{ marginBottom: '20px' }}>
+        <Title level={5} style={{ fontSize: isMobile ? '14px' : '16px' }}>显卡类型</Title>
+        <Checkbox.Group 
+          style={{ display: 'flex', flexDirection: 'column' }}
+          value={selectedGPUType}
+          onChange={setSelectedGPUType}
+        >
+          {gpuTypes.map(type => (
+            <Checkbox key={type} value={type} style={{ margin: '4px 0' }}>
+              {type}
+            </Checkbox>
+          ))}
+        </Checkbox.Group>
+      </div>
+
+      <Divider />
+
+      {/* 地区筛选 */}
+      <div style={{ marginBottom: '20px' }}>
+        <Title level={5} style={{ fontSize: isMobile ? '14px' : '16px' }}>地区</Title>
+        <Checkbox.Group 
+          style={{ display: 'flex', flexDirection: 'column' }}
+          value={selectedRegion}
+          onChange={setSelectedRegion}
+        >
+          {regions.map(region => (
+            <Checkbox key={region} value={region} style={{ margin: '4px 0' }}>
+              {region}
+            </Checkbox>
+          ))}
+        </Checkbox.Group>
+      </div>
+
+      <Divider />
+
+      {/* 显卡数量筛选 */}
+      <div style={{ marginBottom: '20px' }}>
+        <Title level={5} style={{ fontSize: isMobile ? '14px' : '16px' }}>显卡数量</Title>
+        <Radio.Group 
+          value={selectedGPUCount}
+          onChange={e => setSelectedGPUCount(e.target.value)}
+          style={{ display: 'flex', flexDirection: 'column' }}
+        >
+          {gpuCounts.map(count => (
+            <Radio key={count} value={count} style={{ margin: '4px 0' }}>
+              {count === 'all' ? '全部' : count}
+            </Radio>
+          ))}
+        </Radio.Group>
+      </div>
+    </>
+  );
+
   return (
-    <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
+    <div style={{ padding: isMobile ? '12px' : '24px', background: '#f5f5f5', minHeight: '100vh' }}>
       
       {/* 顶部专区标签和发布按钮 */}
       <Card style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', flexWrap: 'wrap' }}>
           <Tabs 
             activeKey={activeTab}
             onChange={setActiveTab}
-            centered
-            size="large"
+            centered={!isMobile}
+            size={isMobile ? 'small' : 'large'}
             tabBarStyle={{
-              fontSize: '18px',
+              fontSize: isMobile ? '14px' : '18px',
               fontWeight: 'bold',
               margin: 0
             }}
-            style={{ flex: 1 }}
+            style={{ flex: 1, minWidth: isMobile ? '100%' : 'auto' }}
           >
             <TabPane 
               tab={
-                 <div style={tabStyle}>
-                  <ThunderboltFilled style={{ marginRight: '8px' }} />
+                 <div style={{ ...tabStyle, fontSize: isMobile ? '14px' : '18px', padding: isMobile ? '8px 12px' : '12px 24px' }}>
+                  <ThunderboltFilled style={{ marginRight: '6px', fontSize: isMobile ? '14px' : '16px' }} />
                   租赁专区
                 </div>
               } 
@@ -394,8 +458,8 @@ const ComputeMarketplace: React.FC = () => {
             />
             <TabPane 
               tab={
-                 <div style={tabStyle}>
-                  <ShoppingCartOutlined style={{ marginRight: '8px' }} />
+                 <div style={{ ...tabStyle, fontSize: isMobile ? '14px' : '18px', padding: isMobile ? '8px 12px' : '12px 24px' }}>
+                  <ShoppingCartOutlined style={{ marginRight: '6px', fontSize: isMobile ? '14px' : '16px' }} />
                   采购专区
                 </div>
               } 
@@ -403,8 +467,8 @@ const ComputeMarketplace: React.FC = () => {
             />
             <TabPane 
               tab={
-                 <div style={tabStyle}>
-                  <CrownFilled style={{ marginRight: '8px' }} />
+                 <div style={{ ...tabStyle, fontSize: isMobile ? '14px' : '18px', padding: isMobile ? '8px 12px' : '12px 24px' }}>
+                  <CrownFilled style={{ marginRight: '6px', fontSize: isMobile ? '14px' : '16px' }} />
                   官方推荐
                 </div>
               } 
@@ -417,8 +481,11 @@ const ComputeMarketplace: React.FC = () => {
             icon={<PlusOutlined />}
             onClick={() => setPublishModalVisible(true)}
             style={{ 
-              position: 'absolute',
-              right: 0
+              position: isMobile ? 'static' : 'absolute',
+              right: isMobile ? 'auto' : 0,
+              marginTop: isMobile ? '12px' : 0,
+              width: isMobile ? '100%' : 'auto',
+              fontSize: isMobile ? '12px' : '14px'
             }}
           >
             发布商品
@@ -427,65 +494,30 @@ const ComputeMarketplace: React.FC = () => {
       </Card>
 
       <Row gutter={16}>
-        {/* 左侧筛选面板 */}
-        <Col xs={24} md={6}>
-          <Card title="筛选条件" style={{ marginBottom: '16px' }}>
-            {/* 显卡类型筛选 */}
-            <div style={{ marginBottom: '20px' }}>
-              <Title level={5}>显卡类型</Title>
-              <Checkbox.Group 
-                style={{ display: 'flex', flexDirection: 'column' }}
-                value={selectedGPUType}
-                onChange={setSelectedGPUType}
-              >
-                {gpuTypes.map(type => (
-                  <Checkbox key={type} value={type} style={{ margin: '4px 0' }}>
-                    {type}
-                  </Checkbox>
-                ))}
-              </Checkbox.Group>
-            </div>
+        {/* 左侧筛选面板 - 桌面端 */}
+        {!isMobile && (
+          <Col xs={24} md={6}>
+            <Card title="筛选条件" style={{ marginBottom: '16px' }}>
+              {filterPanel}
+            </Card>
+          </Col>
+        )}
 
-            <Divider />
-
-            {/* 地区筛选 */}
-            <div style={{ marginBottom: '20px' }}>
-              <Title level={5}>地区</Title>
-              <Checkbox.Group 
-                style={{ display: 'flex', flexDirection: 'column' }}
-                value={selectedRegion}
-                onChange={setSelectedRegion}
-              >
-                {regions.map(region => (
-                  <Checkbox key={region} value={region} style={{ margin: '4px 0' }}>
-                    {region}
-                  </Checkbox>
-                ))}
-              </Checkbox.Group>
-            </div>
-
-            <Divider />
-
-            {/* 显卡数量筛选 */}
-            <div style={{ marginBottom: '20px' }}>
-              <Title level={5}>显卡数量</Title>
-              <Radio.Group 
-                value={selectedGPUCount}
-                onChange={e => setSelectedGPUCount(e.target.value)}
-                style={{ display: 'flex', flexDirection: 'column' }}
-              >
-                {gpuCounts.map(count => (
-                  <Radio key={count} value={count} style={{ margin: '4px 0' }}>
-                    {count === 'all' ? '全部' : count}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            </div>
-          </Card>
-        </Col>
+        {/* 移动端筛选按钮 */}
+        {isMobile && (
+          <Col span={24} style={{ marginBottom: '16px' }}>
+            <Button 
+              block
+              onClick={() => setFilterDrawerVisible(true)}
+              style={{ height: '40px' }}
+            >
+              筛选条件
+            </Button>
+          </Col>
+        )}
 
         {/* 右侧卡片式实例列表 */}
-        <Col xs={24} md={18}>
+        <Col xs={24} md={isMobile ? 24 : 18}>
           <Row gutter={[16, 16]}>
             {filteredInstances.map(instance => (
               <Col xs={24} sm={12} xl={8} key={instance.id}>
@@ -498,7 +530,7 @@ const ComputeMarketplace: React.FC = () => {
                     overflow: 'hidden',
                     cursor: 'pointer'
                   }}
-                  bodyStyle={{ padding: '16px' }}
+                  bodyStyle={{ padding: isMobile ? '12px' : '16px' }}
                   hoverable
                   className="gpu-instance-card"
                   onClick={() => history.push(`/market/product/${instance.id}`)}
@@ -519,10 +551,10 @@ const ComputeMarketplace: React.FC = () => {
                   <div style={{ marginBottom: '12px' }}>
                     <Row justify="space-between" align="top">
                       <Col flex="auto">
-                        <Title level={4} style={{ margin: 0, fontSize: '16px' }}>
+                        <Title level={4} style={{ margin: 0, fontSize: isMobile ? '14px' : '16px' }}>
                           {instance.name}
                         </Title>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                        <Text type="secondary" style={{ fontSize: isMobile ? '11px' : '12px' }}>
                           {instance.model}
                         </Text>
                       </Col>
@@ -929,6 +961,17 @@ const ComputeMarketplace: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* 移动端筛选抽屉 */}
+      <Drawer
+        title="筛选条件"
+        placement="left"
+        onClose={() => setFilterDrawerVisible(false)}
+        open={filterDrawerVisible}
+        width={280}
+      >
+        {filterPanel}
+      </Drawer>
 
       <style jsx>{`
         .gpu-instance-card:hover {

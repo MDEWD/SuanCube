@@ -1,5 +1,7 @@
-import { Typography, Row, Col, Card } from 'antd';
+import { Typography, Row, Col, Card, Grid } from 'antd';
 import React from 'react';
+
+const { useBreakpoint } = Grid;
 import { 
   EyeOutlined
 } from '@ant-design/icons';
@@ -44,9 +46,12 @@ const productData = [
 
 // 商品展示组件
 const ProductDisplay: React.FC = () => {
+    const screens = useBreakpoint();
+    const isMobile = !screens.md;
+    
     return (
       <div style={{ 
-        padding: '10px 40px 20px',
+        padding: isMobile ? '10px 16px 20px' : '10px 40px 20px',
         maxWidth: '1400px',
         margin: '0 auto',
         boxSizing: 'border-box',
@@ -54,13 +59,13 @@ const ProductDisplay: React.FC = () => {
       }}>
         {/* 商品区域标题 */}
         <div style={{ marginBottom: '16px' }}>
-          <Title level={3} style={{ margin: 0, color: '#333', fontSize: '20px' }}>
+          <Title level={3} style={{ margin: 0, color: '#333', fontSize: isMobile ? '18px' : '20px' }}>
             热门GPU产品
           </Title>
         </div>
         
         {/* 商品网格布局 */}
-        <Row gutter={[16, 16]}>
+        <Row gutter={[12, 12]}>
           {productData.map(product => (
             <Col xs={12} sm={8} md={6} key={product.id}>
               <Card 
@@ -74,7 +79,7 @@ const ProductDisplay: React.FC = () => {
                 bodyStyle={{ padding: 0 }}
               >
                 {/* 商品图片 */}
-                <div style={{ height: '140px', overflow: 'hidden' }}>
+                <div style={{ height: isMobile ? '120px' : '140px', overflow: 'hidden' }}>
                   <img
                     src={product.image}
                     alt={product.name}
@@ -94,20 +99,20 @@ const ProductDisplay: React.FC = () => {
                 </div>
                 
                 {/* 商品信息 */}
-                <div style={{ padding: '12px' }}>
+                <div style={{ padding: isMobile ? '10px' : '12px' }}>
                   <Title level={5} style={{ 
                     margin: 0, 
                     marginBottom: '6px', 
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    fontSize: '14px'
+                    fontSize: isMobile ? '12px' : '14px'
                   }}>
                     {product.name}
                   </Title>
                   
                   <div style={{ marginBottom: '0' }}>
-                    <Text style={{ fontSize: '16px', color: '#f50', fontWeight: 'bold' }}>
+                    <Text style={{ fontSize: isMobile ? '14px' : '16px', color: '#f50', fontWeight: 'bold' }}>
                       ¥{product.price}
                     </Text>
                   </div>

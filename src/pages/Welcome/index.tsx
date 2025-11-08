@@ -3,7 +3,9 @@ import React from 'react';
 import Partner from './components/partner';
 import ProductIntro from './components/productIntro';
 import NewsCarousel from './components/newsCarousel';
-import { Card, Typography, Row, Col, Space } from 'antd';
+import { Card, Typography, Row, Col, Space, Grid } from 'antd';
+
+const { useBreakpoint } = Grid;
 import { 
   PlayCircleOutlined,
   DollarOutlined,
@@ -13,6 +15,8 @@ import {
 import ProductDisplay from './components/productDisplay';
 const Welcome: React.FC = () => {
   const { Title, Text } = Typography;
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   // 服务保障数据
   const servicesData = [
@@ -43,8 +47,9 @@ const Welcome: React.FC = () => {
       {/* 顶部轮播图和产品介绍区域 */}
       <div style={{
         display: 'flex',
-        gap: '20px',
-        padding: '20px 40px',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '16px' : '20px',
+        padding: isMobile ? '16px' : '20px 40px',
         maxWidth: '1400px',
         margin: '0 auto',
         boxSizing: 'border-box'
@@ -54,9 +59,10 @@ const Welcome: React.FC = () => {
           flex: 1, 
           borderRadius: '12px',
           overflow: 'hidden',
-          height: '280px',
+          height: isMobile ? '200px' : '280px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          width: '100%'
         }}>
           <NewsCarousel />
         </div>
@@ -66,8 +72,10 @@ const Welcome: React.FC = () => {
           flex: 1, 
           borderRadius: '12px',
           overflow: 'hidden',
-          height: '280px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          height: isMobile ? 'auto' : '280px',
+          minHeight: isMobile ? '200px' : '280px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          width: '100%'
         }}>
           <ProductIntro />
         </div>
@@ -78,7 +86,7 @@ const Welcome: React.FC = () => {
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '0 40px'
+        padding: isMobile ? '0 16px' : '0 40px'
       }}>
         {/* 服务保障部分 */}
         <Card 

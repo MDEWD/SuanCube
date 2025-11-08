@@ -17,8 +17,11 @@ import {
   List,
   Tooltip,
   Input,
-  message
+  message,
+  Grid
 } from 'antd';
+
+const { useBreakpoint } = Grid;
 import { 
   ShoppingCartOutlined, 
   HeartOutlined, 
@@ -72,6 +75,8 @@ interface GPUInstance {
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
   // 评论状态
   interface CommentItem {
     id: string;
@@ -178,9 +183,9 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
+    <div style={{ padding: isMobile ? '12px' : '24px', background: '#f5f5f5', minHeight: '100vh' }}>
       {/* 面包屑导航 */}
-      <Breadcrumb style={{ marginBottom: '16px' }}>
+      <Breadcrumb style={{ marginBottom: '12px', fontSize: isMobile ? '12px' : '14px' }}>
         <Breadcrumb.Item>
           <Link to="/market">
             <HomeOutlined /> 计算市场
@@ -196,21 +201,23 @@ const ProductDetail: React.FC = () => {
           type="text" 
           icon={<ArrowLeftOutlined />} 
           onClick={() => history.push('/market')}
-          style={{ marginBottom: '16px' }}
+          style={{ marginBottom: '16px', padding: isMobile ? '4px 8px' : undefined }}
         >
           返回市场
         </Button>
 
         {/* 商品基本信息 */}
         <div style={{ marginBottom: '24px' }}>
-          <Row gutter={24} align="middle">
-            <Col span={16}>
-              <Title level={2}>{product.name}</Title>
-              <Text type="secondary" style={{ fontSize: '16px' }}>
+          <Row gutter={24} align={isMobile ? 'top' : 'middle'}>
+            <Col xs={24} md={16}>
+              <Title level={2} style={{ fontSize: isMobile ? '20px' : '24px', marginBottom: '8px' }}>
+                {product.name}
+              </Title>
+              <Text type="secondary" style={{ fontSize: isMobile ? '14px' : '16px' }}>
                 {product.model}
               </Text>
               <div style={{ marginTop: '8px' }}>
-                <Space wrap>
+                <Space wrap size={[0, 4]}>
                   {product.tags.map(tag => (
                     <Tag 
                       key={tag} 
@@ -219,6 +226,7 @@ const ProductDetail: React.FC = () => {
                         tag === '推荐' ? 'orange' : 
                         tag === '免费带宽' ? 'green' : 'blue'
                       }
+                      style={{ fontSize: isMobile ? '11px' : '12px' }}
                     >
                       {tag}
                     </Tag>
@@ -226,25 +234,26 @@ const ProductDetail: React.FC = () => {
                 </Space>
               </div>
             </Col>
-            <Col span={8} style={{ textAlign: 'right' }}>
+            <Col xs={24} md={8} style={{ textAlign: isMobile ? 'left' : 'right', marginTop: isMobile ? '16px' : 0 }}>
               <div style={{ marginBottom: '8px' }}>
                 <Rate 
                   disabled 
                   defaultValue={product.rating} 
                   character={<StarFilled />}
+                  style={{ fontSize: isMobile ? '14px' : '16px' }}
                 />
-                <Text strong style={{ marginLeft: '8px' }}>
+                <Text strong style={{ marginLeft: '8px', fontSize: isMobile ? '14px' : '16px' }}>
                   {product.rating}
                 </Text>
               </div>
               <Text style={{ 
-                fontSize: '32px', 
+                fontSize: isMobile ? '24px' : '32px', 
                 color: '#ff4d4f', 
                 fontWeight: 'bold',
                 lineHeight: '1.2'
               }}>
                 ￥{product.price}
-                <Text style={{ fontSize: '16px', fontWeight: 'normal' }}>/月</Text>
+                <Text style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 'normal' }}>/月</Text>
               </Text>
             </Col>
           </Row>
@@ -254,9 +263,14 @@ const ProductDetail: React.FC = () => {
 
         {/* 配置详情 */}
         <Row gutter={24}>
-          <Col span={16}>
-            <Title level={4}>配置详情</Title>
-            <Descriptions bordered column={2} style={{ marginBottom: '24px' }}>
+          <Col xs={24} md={16}>
+            <Title level={4} style={{ fontSize: isMobile ? '16px' : '18px' }}>配置详情</Title>
+            <Descriptions 
+              bordered 
+              column={isMobile ? 1 : 2} 
+              style={{ marginBottom: '24px' }}
+              size={isMobile ? 'small' : 'default'}
+            >
               <Descriptions.Item label="GPU类型">{product.name}</Descriptions.Item>
               <Descriptions.Item label="GPU型号">{product.model}</Descriptions.Item>
               <Descriptions.Item label="可用性">
@@ -284,9 +298,14 @@ const ProductDetail: React.FC = () => {
             </Space>
 
             {/* 机房信息 */}
-            <Title level={4}>机房信息</Title>
-            <Descriptions bordered style={{ marginBottom: '24px' }}>
-              <Descriptions.Item label="机房坐标" span={3}>
+            <Title level={4} style={{ fontSize: isMobile ? '16px' : '18px' }}>机房信息</Title>
+            <Descriptions 
+              bordered 
+              column={isMobile ? 1 : 3}
+              style={{ marginBottom: '24px' }}
+              size={isMobile ? 'small' : 'default'}
+            >
+              <Descriptions.Item label="机房坐标" span={isMobile ? 1 : 3}>
                 <Space>
                   <EnvironmentOutlined />
                   {product.dataCenterLocation}
@@ -295,7 +314,7 @@ const ProductDetail: React.FC = () => {
                   )}
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="机房评语" span={3}>
+              <Descriptions.Item label="机房评语" span={isMobile ? 1 : 3}>
                 {product.dataCenterDescription}
               </Descriptions.Item>
             </Descriptions>
@@ -303,11 +322,11 @@ const ProductDetail: React.FC = () => {
             {/* 机房环境图片 */}
             {product.dataCenterImages && product.dataCenterImages.length > 0 && (
               <>
-                <Title level={4}>机房环境</Title>
+                <Title level={4} style={{ fontSize: isMobile ? '16px' : '18px' }}>机房环境</Title>
                 <Image.PreviewGroup>
                   <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
                     {product.dataCenterImages.map((img, index) => (
-                      <Col span={8} key={index}>
+                      <Col xs={24} sm={12} md={8} key={index}>
                         <Image
                           src={img}
                           alt={`机房环境 ${index + 1}`}
@@ -422,19 +441,23 @@ const ProductDetail: React.FC = () => {
           </Col>
 
           {/* 侧边操作面板 */}
-          <Col span={8}>
+          <Col xs={24} md={8}>
             <Card 
               title="租赁信息" 
-              style={{ position: 'sticky', top: '24px' }}
+              style={{ 
+                position: isMobile ? 'static' : 'sticky', 
+                top: isMobile ? 'auto' : '24px',
+                marginTop: isMobile ? '24px' : 0
+              }}
             >
               <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 <Text style={{ 
-                  fontSize: '28px', 
+                  fontSize: isMobile ? '24px' : '28px', 
                   color: '#ff4d4f', 
                   fontWeight: 'bold' 
                 }}>
                   ￥{product.price}
-                  <Text style={{ fontSize: '16px', fontWeight: 'normal' }}>/月</Text>
+                  <Text style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 'normal' }}>/月</Text>
                 </Text>
                 <div>
                   {/* <Text type="secondary">0.3小时起 · 非黄金会员价</Text> */}
