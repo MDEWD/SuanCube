@@ -548,23 +548,23 @@ const ComputeMarketplace: React.FC = () => {
                   </div>
 
                   {/* 机器码和评分 */}
-                  <div style={{ marginBottom: '12px' }}>
+                  {/* <div style={{ marginBottom: '12px' }}>
                     <Row justify="space-between" align="middle">
                       <Col>
                         <Space size="small">
-                          {/* <Rate 
+                          <Rate 
                             disabled 
                             defaultValue={instance.rating} 
                             style={{ fontSize: '12px' }} 
                             character={<StarFilled />}
-                          /> */}
+                          />
                           <Text strong style={{ fontSize: '12px' }}>
                             {instance.rating}
                           </Text>
                         </Space>
                       </Col>
                     </Row>
-                  </div>
+                  </div> */}
 
                   {/* 关键配置信息 */}
                   <div style={{ marginBottom: '16px' }}>
@@ -795,6 +795,15 @@ const ComputeMarketplace: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
+                label="库存"
+                name="gpuAvailable"
+                rules={[{ required: true, message: '请输入库存信息' }]}
+              >
+                <Input placeholder="例如：12" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
                 label="内存"
                 name="memory"
                 rules={[{ required: true, message: '请输入内存信息' }]}
@@ -804,8 +813,8 @@ const ComputeMarketplace: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="数据存储"
-                name="storage"
+                label="集群存储"
+                name="dataDisk"
                 rules={[{ required: true, message: '请输入存储信息' }]}
               >
                 <Input placeholder="例如：系统盘 20G + 数据盘 50GB NVME" />
@@ -813,7 +822,7 @@ const ComputeMarketplace: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="带宽"
+                label="公网带宽"
                 name="bandwidth"
                 rules={[{ required: true, message: '请输入带宽信息' }]}
               >
@@ -822,11 +831,29 @@ const ComputeMarketplace: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="机房坐标"
+                label="机房位置"
                 name="location"
-                rules={[{ required: true, message: '请输入机房坐标' }]}
+                rules={[{ required: true, message: '请输入机房位置' }]}
               >
                 <Input placeholder="例如：上海" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="系统盘"
+                name="systemDisk"
+                rules={[{ required: true, message: '请输入系统盘信息' }]}
+              >
+                <Input placeholder="例如：20G" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="高速网卡"
+                name="highSpeedNetworkCard"
+                rules={[{ required: true, message: '请输入高速网卡信息' }]}
+              >
+                <Input placeholder="例如：可配" />
               </Form.Item>
             </Col>
           </Row>
