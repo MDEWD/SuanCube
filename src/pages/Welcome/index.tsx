@@ -43,8 +43,8 @@ const Welcome: React.FC = () => {
       {/* 顶部轮播图和产品介绍区域 */}
       <div style={{
         display: 'flex',
-        gap: '24px',
-        padding: '40px',
+        gap: '20px',
+        padding: '20px 40px',
         maxWidth: '1400px',
         margin: '0 auto',
         boxSizing: 'border-box'
@@ -54,7 +54,7 @@ const Welcome: React.FC = () => {
           flex: 1, 
           borderRadius: '12px',
           overflow: 'hidden',
-          height: '420px',
+          height: '280px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
           backgroundColor: '#fff'
         }}>
@@ -66,7 +66,7 @@ const Welcome: React.FC = () => {
           flex: 1, 
           borderRadius: '12px',
           overflow: 'hidden',
-          height: '420px',
+          height: '280px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
         }}>
           <ProductIntro />

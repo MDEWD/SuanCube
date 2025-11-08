@@ -34,47 +34,46 @@ const carouselData = [
   // 轮播图组件 - 精确控制高度
   const NewsCarousel: React.FC = () => {
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ width: '100%', height: '100%', position: 'relative' }}>
         <Carousel
           autoplay
-        //   dots={{
-        //     style: {
-        //       bottom: 20
-        //     }
-        //   }}
+          style={{ height: '100%' }}
           arrows
           prevArrow={<LeftOutlined style={{ 
-            fontSize: '24px', 
+            fontSize: '20px', 
             color: '#fff',
             backgroundColor: 'rgba(0,0,0,0.3)',
-            width: 40,
-            height: 40,
+            width: 32,
+            height: 32,
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            left: 10
+            left: 8,
+            zIndex: 10
           }} />}
           nextArrow={<RightOutlined style={{ 
-            fontSize: '24px', 
+            fontSize: '20px', 
             color: '#fff',
             backgroundColor: 'rgba(0,0,0,0.3)',
-            width: 40,
-            height: 40,
+            width: 32,
+            height: 32,
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            right: 10
+            right: 8,
+            zIndex: 10
           }} />}
         >
           {carouselData.map((item, index) => (
-            <div key={index} style={{ height: '100%' }}>
+            <div key={index} style={{ height: '280px' }}>
               <div style={{
                 position: 'relative',
                 borderRadius: '8px',
                 overflow: 'hidden',
-                height: '100%'
+                height: '100%',
+                width: '100%'
               }}>
                 <img
                   src={item.image}
@@ -91,13 +90,42 @@ const carouselData = [
                   left: 0,
                   right: 0,
                   background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                  padding: '24px',
-                  color: '#fff'
+                  padding: '16px 20px',
+                  color: '#fff',
+                  maxHeight: '100%',
+                  overflow: 'hidden'
                 }}>
-                  <Title level={4} style={{ color: '#fff', marginBottom: '8px', fontSize: '18px', marginTop: 0 }}>
+                  <Title 
+                    level={4} 
+                    style={{ 
+                      color: '#fff', 
+                      marginBottom: '6px', 
+                      fontSize: '16px', 
+                      marginTop: 0,
+                      lineHeight: 1.4,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
                     {item.title}
                   </Title>
-                  <Paragraph style={{ color: '#fff', marginBottom: '12px', fontSize: '14px', lineHeight: 1.6, marginTop: 0 }}>
+                  <Paragraph 
+                    style={{ 
+                      color: '#fff', 
+                      marginBottom: '8px', 
+                      fontSize: '12px', 
+                      lineHeight: 1.5, 
+                      marginTop: 0,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
                     {item.summary}
                   </Paragraph>
                   <Button 
@@ -106,7 +134,9 @@ const carouselData = [
                     style={{ 
                       color: '#fff',
                       padding: 0,
-                      fontSize: '14px'
+                      fontSize: '12px',
+                      height: 'auto',
+                      lineHeight: 1
                     }}
                   >
                     {item.tag}

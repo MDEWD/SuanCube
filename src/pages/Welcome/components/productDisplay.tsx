@@ -46,21 +46,21 @@ const productData = [
 const ProductDisplay: React.FC = () => {
     return (
       <div style={{ 
-        padding: '20px 40px',
+        padding: '10px 40px 20px',
         maxWidth: '1400px',
         margin: '0 auto',
         boxSizing: 'border-box',
         width: '100%'
       }}>
         {/* 商品区域标题 */}
-        <div style={{ marginBottom: '24px' }}>
-          <Title level={3} style={{ margin: 0, color: '#333' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <Title level={3} style={{ margin: 0, color: '#333', fontSize: '20px' }}>
             热门GPU产品
           </Title>
         </div>
         
         {/* 商品网格布局 */}
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]}>
           {productData.map(product => (
             <Col xs={12} sm={8} md={6} key={product.id}>
               <Card 
@@ -74,7 +74,7 @@ const ProductDisplay: React.FC = () => {
                 bodyStyle={{ padding: 0 }}
               >
                 {/* 商品图片 */}
-                <div style={{ height: '200px', overflow: 'hidden' }}>
+                <div style={{ height: '140px', overflow: 'hidden' }}>
                   <img
                     src={product.image}
                     alt={product.name}
@@ -94,19 +94,20 @@ const ProductDisplay: React.FC = () => {
                 </div>
                 
                 {/* 商品信息 */}
-                <div style={{ padding: '16px' }}>
+                <div style={{ padding: '12px' }}>
                   <Title level={5} style={{ 
                     margin: 0, 
-                    marginBottom: '8px', 
+                    marginBottom: '6px', 
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    fontSize: '14px'
                   }}>
                     {product.name}
                   </Title>
                   
-                  <div style={{ marginBottom: '8px' }}>
-                    <Text style={{ fontSize: '18px', color: '#f50', fontWeight: 'bold' }}>
+                  <div style={{ marginBottom: '0' }}>
+                    <Text style={{ fontSize: '16px', color: '#f50', fontWeight: 'bold' }}>
                       ¥{product.price}
                     </Text>
                   </div>
