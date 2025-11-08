@@ -14,7 +14,7 @@ import {
   SafetyOutlined,
   FileTextOutlined
 } from '@ant-design/icons';
-
+import ProductDisplay from './components/productDisplay';
 const Welcome: React.FC = () => {
   const { Title, Text } = Typography;
 
@@ -104,6 +104,7 @@ const Welcome: React.FC = () => {
           <ProductIntro />
         </div>
       </div>
+      <ProductDisplay />
 
       {/* 主要内容区域 */}
       <div style={{

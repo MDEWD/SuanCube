@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, history, Link } from 'umi';
 import { 
   Card, 
@@ -12,7 +12,12 @@ import {
   Rate,
   Descriptions,
   Image,
-  Breadcrumb
+  Breadcrumb,
+  Avatar,
+  List,
+  Tooltip,
+  Input,
+  message
 } from 'antd';
 import { 
   ShoppingCartOutlined, 
@@ -20,10 +25,20 @@ import {
   StarFilled,
   EnvironmentOutlined,
   HomeOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  UserOutlined,
+  LikeOutlined,
+  DislikeOutlined,
+  SendOutlined
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+dayjs.extend(relativeTime);
+dayjs.extend(localizedFormat);
 
 const { Title, Text } = Typography;
+const { TextArea } = Input;
 import { gpuInstances } from '../index';
 
 // 类型定义
@@ -57,8 +72,99 @@ interface GPUInstance {
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  // 评论状态
+  interface CommentItem {
+    id: string;
+    author: string;
+    avatar: string;
+    content: string;
+    rating: number;
+    createTime: string; // YYYY-MM-DD HH:mm:ss
+    likes: number;
+    dislikes: number;
+    isLiked?: boolean;
+    isDisliked?: boolean;
+  }
+
+  const [comments, setComments] = useState<CommentItem[]>([
+    {
+      id: 'c1',
+      author: '张工程师',
+      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=1',
+      content: '机器稳定、网络通畅，训练任务跑得很顺畅。',
+      rating: 5,
+      createTime: dayjs().subtract(2, 'day').format('YYYY-MM-DD HH:mm:ss'),
+      likes: 12,
+      dislikes: 0
+    },
+    {
+      id: 'c2',
+      author: '李研究员',
+      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=2',
+      content: '性价比不错，客服响应也挺快的。',
+      rating: 4,
+      createTime: dayjs().subtract(5, 'hour').format('YYYY-MM-DD HH:mm:ss'),
+      likes: 3,
+      dislikes: 0
+    }
+  ]);
+  const [newContent, setNewContent] = useState('');
+  const [newRating, setNewRating] = useState<number>(5);
+  const [submitting, setSubmitting] = useState(false);
   
   const product = gpuInstances.find(instance => instance.id === id);
+
+  const handleSubmit = async () => {
+    if (!newContent.trim()) {
+      message.warning('请输入评论内容');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const created: CommentItem = {
+        id: String(Date.now()),
+        author: '当前用户',
+        avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=you',
+        content: newContent.trim(),
+        rating: newRating,
+        createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        likes: 0,
+        dislikes: 0
+      };
+      setComments([created, ...comments]);
+      setNewContent('');
+      setNewRating(5);
+      message.success('评论发表成功');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const toggleVote = (id: string, action: 'like' | 'dislike') => {
+    setComments(prev => prev.map(c => {
+      if (c.id !== id) return c;
+      if (action === 'like') {
+        const liked = !c.isLiked;
+        return {
+          ...c,
+          isLiked: liked,
+          isDisliked: false,
+          likes: c.likes + (liked ? 1 : -1),
+          dislikes: c.isDisliked ? c.dislikes - 1 : c.dislikes
+        };
+      } else {
+        const disliked = !c.isDisliked;
+        return {
+          ...c,
+          isDisliked: disliked,
+          isLiked: false,
+          dislikes: c.dislikes + (disliked ? 1 : -1),
+          likes: c.isLiked ? c.likes - 1 : c.likes
+        };
+      }
+    }));
+  };
 
   if (!product) {
     return (
@@ -84,7 +190,7 @@ const ProductDetail: React.FC = () => {
         <Breadcrumb.Item>{product.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card>
+      <Card style={{ borderRadius: '12px' }}>
         {/* 返回按钮 */}
         <Button 
           type="text" 
@@ -218,6 +324,101 @@ const ProductDetail: React.FC = () => {
                 </Image.PreviewGroup>
               </>
             )}
+
+            {/* 评论区域 */}
+            <div style={{ marginTop: 32 }}>
+              <Title level={4} style={{ marginBottom: 16 }}>用户评论</Title>
+
+              {/* 发表评论卡片 */}
+              <Card
+                style={{
+                  marginBottom: 20,
+                  borderRadius: '12px',
+                  border: '1px solid #e8e8e8',
+                  background: '#fafafa'
+                }}
+                bodyStyle={{ padding: 20 }}
+              >
+                <div style={{ display: 'flex', gap: 16 }}>
+                  <Avatar size={48} icon={<UserOutlined />} src={'https://api.dicebear.com/7.x/miniavs/svg?seed=you'} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                      <Text strong>我的评分</Text>
+                      <Rate value={newRating} onChange={setNewRating} character={<StarFilled />} />
+                      <Text type="secondary">{newRating} 星</Text>
+                    </div>
+                    <TextArea
+                      rows={4}
+                      placeholder="分享您的使用体验，对其他用户很有帮助…"
+                      value={newContent}
+                      onChange={(e) => setNewContent(e.target.value)}
+                      maxLength={500}
+                      showCount
+                      style={{ borderRadius: 8, marginBottom: 24 }}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button type="primary" icon={<SendOutlined />} onClick={handleSubmit} loading={submitting}>
+                        发表评论
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* 评论列表 */}
+              <List
+                itemLayout="horizontal"
+                dataSource={comments}
+                locale={{ emptyText: '还没有评论，来做第一个吧～' }}
+                renderItem={(item) => (
+                  <li>
+                    <Card
+                      style={{
+                        marginBottom: 12,
+                        borderRadius: 12,
+                        border: '1px solid #f0f0f0',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+                      }}
+                      bodyStyle={{ padding: 16 }}
+                    >
+                      <div style={{ display: 'flex', gap: 12 }}>
+                        <Avatar size={40} src={item.avatar} icon={<UserOutlined />} />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                            <Space size="small" wrap>
+                              <Text strong>{item.author}</Text>
+                              <Rate disabled defaultValue={item.rating} character={<StarFilled />} style={{ fontSize: 14 }} />
+                            </Space>
+                            <Tooltip title={dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')}>
+                              <Text type="secondary" style={{ fontSize: 12 }}>{dayjs(item.createTime).fromNow()}</Text>
+                            </Tooltip>
+                          </div>
+                          <Text style={{ display: 'block', marginBottom: 8 }}>{item.content}</Text>
+                          <Space size="middle">
+                            <Button
+                              type="text"
+                              icon={<LikeOutlined />}
+                              onClick={() => toggleVote(item.id, 'like')}
+                              style={{ color: item.isLiked ? '#1677ff' : undefined }}
+                            >
+                              {item.likes}
+                            </Button>
+                            <Button
+                              type="text"
+                              icon={<DislikeOutlined />}
+                              onClick={() => toggleVote(item.id, 'dislike')}
+                              style={{ color: item.isDisliked ? '#ff4d4f' : undefined }}
+                            >
+                              {item.dislikes}
+                            </Button>
+                          </Space>
+                        </div>
+                      </div>
+                    </Card>
+                  </li>
+                )}
+              />
+            </div>
           </Col>
 
           {/* 侧边操作面板 */}

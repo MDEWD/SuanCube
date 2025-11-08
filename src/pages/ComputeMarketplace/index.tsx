@@ -67,6 +67,7 @@ interface GPUInstance {
   dataCenterImages?: string[];
   isNewDataCenter?: boolean;
   dataCenterDescription?: string;
+  type?: 'lease' | 'official-recommend'; // 租赁专区或官方推荐
 }
 
 // 发布商品表单数据类型
@@ -85,8 +86,9 @@ interface PublishFormData {
   images: any[];
 }
 
-// 实例数据
+// 实例数据（合并租赁专区和官方推荐）
 export const gpuInstances: GPUInstance[] = [
+  // 租赁专区商品
   {
     id: '1',
     name: 'NVIDIA GeForce RTX 3060',
@@ -113,7 +115,8 @@ export const gpuInstances: GPUInstance[] = [
       'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
     ],
     isNewDataCenter: false,
-    dataCenterDescription: '稳定可靠的机房环境，多年运营经验'
+    dataCenterDescription: '稳定可靠的机房环境，多年运营经验',
+    type: 'lease'
   },
   {
     id: '2',
@@ -141,7 +144,8 @@ export const gpuInstances: GPUInstance[] = [
       'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
     ],
     isNewDataCenter: true,
-    dataCenterDescription: '全新机房，采用最新制冷技术，节能环保'
+    dataCenterDescription: '全新机房，采用最新制冷技术，节能环保',
+    type: 'lease'
   },
   {
     id: '3',
@@ -171,11 +175,101 @@ export const gpuInstances: GPUInstance[] = [
       'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop'
     ],
     isNewDataCenter: true,
-    dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障'
+    dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障',
+    type: 'lease'
+  },
+  // 官方推荐商品
+  {
+    id: 'official-1',
+    name: 'NVIDIA L20',
+    model: 'L20-48G',
+    availableUntil: '2026-12-31',
+    rating: 5,
+    gpuAvailable: 61,
+    gpuTotal: 61,
+    cpu: '英特尔至强8458P 44C 2.7GHz *2',
+    memory: '64GB/DDR5 RDIMM *32',
+    systemDisk: '480G SATA *2',
+    dataDisk: '3.84T NVME U.2 *4',
+    maxCudaVersion: '12.0',
+    price: 11000,
+    tags: ['官方推荐', '高性能', '高可用'],
+    region: '华东',
+    gpuCountType: '8卡',
+    bandwidth: '100Mbps共享',
+    driverVersion: '最新',
+    applicationScenes: ['AI训练', 'AI推理', '图形渲染'],
+    dataCenterLocation: '上海',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: false,
+    dataCenterDescription: '稳定可靠的机房环境，多年运营经验',
+    type: 'official-recommend'
+  },
+  {
+    id: 'official-2',
+    name: 'NVIDIA GeForce RTX 4090',
+    model: '4090-24G',
+    availableUntil: '2026-12-31',
+    rating: 5,
+    gpuAvailable: 10,
+    gpuTotal: 10,
+    cpu: 'AMD 7542*2',
+    memory: 'DDR4 3200 32G*32',
+    systemDisk: '480G SATA SSD*2 raid1',
+    dataDisk: '3.84T NVME U.2*1',
+    maxCudaVersion: '12.0',
+    price: 7000,
+    tags: ['官方推荐', '性价比', '热卖'],
+    region: '西南',
+    gpuCountType: '8卡',
+    bandwidth: '100Mbps共享',
+    driverVersion: '最新',
+    applicationScenes: ['AI训练', 'AI推理'],
+    dataCenterLocation: '四川',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: true,
+    dataCenterDescription: '全新机房，采用最新制冷技术，节能环保',
+    type: 'official-recommend'
+  },
+  {
+    id: 'official-3',
+    name: 'NVIDIA GeForce RTX 4090D',
+    model: '4090D-24G',
+    availableUntil: '2026-12-31',
+    rating: 5,
+    gpuAvailable: 100,
+    gpuTotal: 100,
+    cpu: '英特尔至强8352V 2.1GHz*2',
+    memory: '32GB/DDR4 RDIMM*16',
+    systemDisk: '480G SATA*1',
+    dataDisk: '3.84T NVME U.2*1',
+    maxCudaVersion: '12.0',
+    price: 7000,
+    tags: ['官方推荐', '新机房', '限时特价'],
+    region: '华东',
+    gpuCountType: '8卡',
+    bandwidth: '100Mbps共享',
+    driverVersion: '最新',
+    applicationScenes: ['AI训练', 'AI推理'],
+    dataCenterLocation: '上海',
+    dataCenterImages: [
+      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop'
+    ],
+    isNewDataCenter: true,
+    dataCenterDescription: '2024年新建T3+级别数据中心，双路供电保障',
+    type: 'official-recommend'
   }
 ];
 
 const ComputeMarketplace: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('lease');
   const [selectedGPUType, setSelectedGPUType] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedGPUCount, setSelectedGPUCount] = useState<string>('all');
@@ -200,15 +294,35 @@ const ComputeMarketplace: React.FC = () => {
 
   // 筛选逻辑
   const filteredInstances = gpuInstances.filter(instance => {
+    // 根据标签页过滤类型
+    if (activeTab === 'official-recommend') {
+      // 官方推荐标签页：只显示官方推荐商品
+      if (instance.type !== 'official-recommend') {
+        return false;
+      }
+    } else if (activeTab === 'lease') {
+      // 租赁专区标签页：显示租赁专区商品和官方推荐商品
+      if (instance.type !== 'lease' && instance.type !== 'official-recommend') {
+        return false;
+      }
+    } else {
+      // 采购专区等其他标签页：可以根据需要设置过滤逻辑
+      // 暂时不显示任何商品，或者根据需要添加逻辑
+      return false;
+    }
+    
+    // GPU类型筛选
     if (selectedGPUType.length > 0 && !selectedGPUType.some(type => 
       instance.name.includes(type) || instance.model.includes(type))) {
       return false;
     }
     
+    // 地区筛选
     if (selectedRegion.length > 0 && !selectedRegion.includes(instance.region)) {
       return false;
     }
     
+    // GPU数量筛选
     if (selectedGPUCount !== 'all' && instance.gpuCountType !== selectedGPUCount) {
       return false;
     }
@@ -256,15 +370,18 @@ const ComputeMarketplace: React.FC = () => {
       
       {/* 顶部专区标签和发布按钮 */}
       <Card style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
           <Tabs 
-            defaultActiveKey="lease" 
+            activeKey={activeTab}
+            onChange={setActiveTab}
             centered
             size="large"
             tabBarStyle={{
               fontSize: '18px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              margin: 0
             }}
+            style={{ flex: 1 }}
           >
             <TabPane 
               tab={
@@ -299,7 +416,10 @@ const ComputeMarketplace: React.FC = () => {
             type="primary" 
             icon={<PlusOutlined />}
             onClick={() => setPublishModalVisible(true)}
-            style={{ marginLeft: '16px' }}
+            style={{ 
+              position: 'absolute',
+              right: 0
+            }}
           >
             发布商品
           </Button>
@@ -432,12 +552,12 @@ const ComputeMarketplace: React.FC = () => {
                     <Row justify="space-between" align="middle">
                       <Col>
                         <Space size="small">
-                          <Rate 
+                          {/* <Rate 
                             disabled 
                             defaultValue={instance.rating} 
                             style={{ fontSize: '12px' }} 
                             character={<StarFilled />}
-                          />
+                          /> */}
                           <Text strong style={{ fontSize: '12px' }}>
                             {instance.rating}
                           </Text>
@@ -451,7 +571,7 @@ const ComputeMarketplace: React.FC = () => {
                     <Row gutter={[8, 8]}>
                       <Col span={12}>
                         <Statistic
-                          title="GPU"
+                          title="库存"
                           value={`${instance.gpuAvailable}/${instance.gpuTotal}`}
                           valueStyle={{ fontSize: '14px', fontWeight: 'bold' }}
                         />
@@ -494,7 +614,7 @@ const ComputeMarketplace: React.FC = () => {
                         </Text>
                       </Col>
                       <Col span={24}>
-                        <Text strong style={{ fontSize: '12px' }}>驱动: </Text>
+                        <Text strong style={{ fontSize: '12px' }}>机房位置: </Text>
                         <Text style={{ fontSize: '12px' }}>{instance.driverVersion}</Text>
                       </Col>
                       <Col span={24}>
