@@ -6,12 +6,45 @@ import {
   FileTextOutlined, 
   SoundOutlined, 
   ContactsOutlined,
-  RightOutlined
+  RightOutlined,
+  NotificationOutlined,
+  RocketOutlined,
+  SafetyOutlined
 } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Popover, List, Tag, Typography } from 'antd';
 
 const Header: React.FC = () => {
-    const navigate = useNavigate(); // 获取navigate对象用于路由跳转
+  const { Text } = Typography;
+  const navigate = useNavigate(); // 获取navigate对象用于路由跳转
+  
+  // 最新更新数据
+  const updatesData = [
+    {
+      title: '新功能发布：算力市场竞价模式',
+      description: '2024-01-15 · 新增了算力竞价功能，可以更灵活地租用算力',
+      tag: <Tag icon={<RocketOutlined />} color="green">新功能</Tag>,
+      icon: <RocketOutlined style={{ color: '#52c41a', fontSize: '16px' }} />
+    },
+    {
+      title: '价格调整通知',
+      description: '2024-01-10 · 部分算力产品价格优化调整',
+      tag: <Tag icon={<NotificationOutlined />} color="orange">公告</Tag>,
+      icon: <NotificationOutlined style={{ color: '#fa8c16', fontSize: '16px' }} />
+    },
+    {
+      title: '安全升级完成',
+      description: '2024-01-05 · 完成系统安全升级，提升数据保护能力',
+      tag: <Tag icon={<SafetyOutlined />} color="red">安全</Tag>,
+      icon: <SafetyOutlined style={{ color: '#ff4d4f', fontSize: '16px' }} />
+    },
+    {
+      title: 'API文档更新',
+      description: '2024-01-03 · 更新了开发者API接口文档',
+      tag: <Tag icon={<FileTextOutlined />} color="blue">文档</Tag>,
+      icon: <FileTextOutlined style={{ color: '#1890ff', fontSize: '16px' }} />
+    }
+  ];
+
   const navItems = [
     { icon: <CloudOutlined />, label: '算力集市', key: 'market', path: '/market' },
     { icon: <DatabaseOutlined />, label: '社区', key: 'resources', path: '/community' },
@@ -25,6 +58,47 @@ const Header: React.FC = () => {
   const handleNavClick = (path: string) => {
     navigate(path);
   };
+
+  // 最新更新Popover内容
+  const updatesContent = (
+    <div style={{ width: '400px', maxHeight: '500px', overflowY: 'auto' }}>
+      <div style={{ 
+        padding: '12px 16px', 
+        borderBottom: '1px solid #f0f0f0',
+        fontSize: '16px',
+        fontWeight: 600
+      }}>
+        最新更新
+      </div>
+      <List
+        itemLayout="horizontal"
+        dataSource={updatesData}
+        renderItem={item => (
+          <List.Item
+            style={{ 
+              padding: '16px',
+              borderBottom: '1px solid #f5f5f5'
+            }}
+            actions={[item.tag]}
+          >
+            <List.Item.Meta
+              avatar={item.icon}
+              title={
+                <Text strong style={{ fontSize: '14px' }}>
+                  {item.title}
+                </Text>
+              }
+              description={
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {item.description}
+                </Text>
+              }
+            />
+          </List.Item>
+        )}
+      />
+    </div>
+  );
 
   return (
     <div style={{
@@ -58,7 +132,7 @@ const Header: React.FC = () => {
       </div>
 
       {/* 导航菜单 */}
-      <div style={{ display: 'flex', gap: '32px' }}>
+      <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
         {navItems.map(item => (
           <div 
             key={item.key} 
@@ -83,6 +157,33 @@ const Header: React.FC = () => {
             <span style={{ fontSize: '14px', color: '#333' }}>{item.label}</span>
           </div>
         ))}
+        {/* 通知图标 */}
+        <Popover
+          content={updatesContent}
+          title={null}
+          trigger="hover"
+          placement="bottomRight"
+          overlayStyle={{ padding: 0 }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              transition: 'all 0.3s'
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f5f5f5';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent';
+            }}
+          >
+            <NotificationOutlined style={{ fontSize: '18px', color: '#333' }} />
+          </div>
+        </Popover>
       </div>
 
       {/* 用户操作 */}
