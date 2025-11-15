@@ -5,7 +5,7 @@ import {
   QuestionCircleOutlined, 
   FileTextOutlined, 
   SoundOutlined, 
-  ContactsOutlined,
+  UserOutlined,
   RightOutlined
 } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -18,7 +18,7 @@ const Header: React.FC = () => {
     { icon: <QuestionCircleOutlined />, label: '合作伙伴', key: 'product', path: '/partner' }, // 合作伙伴页面路径
     { icon: <FileTextOutlined />, label: '高校解决方案', key: 'news', path: '/solution' },
     { icon: <SoundOutlined />, label: '帮助文档', key: 'help', path: '/help' },
-    { icon: <ContactsOutlined />, label: '联系我们', key: 'contact', path: '/contact' },
+    { icon: <UserOutlined />, label: '个人中心', key: 'profile', path: '/profile' },
   ];
 
   // 处理导航项点击事件

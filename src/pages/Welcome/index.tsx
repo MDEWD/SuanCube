@@ -3,6 +3,7 @@ import React from 'react';
 import Partner from './components/partner';
 import ProductIntro from './components/productIntro';
 import NewsCarousel from './components/newsCarousel';
+import CaseStudy from './components/caseStudy';
 import { Card, Typography, Row, Col, Space, Grid } from 'antd';
 
 const { useBreakpoint } = Grid;
@@ -135,6 +136,9 @@ const Welcome: React.FC = () => {
           </Row>
         </Card>
       </div>
+
+      {/* 案例分享部分 */}
+      <CaseStudy />
 
       {/* 合作伙伴部分 */}
       <Partner />

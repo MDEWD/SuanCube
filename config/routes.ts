@@ -15,6 +15,7 @@ export default [
   { path: '/market', icon: 'smile', component: './ComputeMarketplace/index' },
   { path: '/market/product/:id', icon: 'smile', component: './ComputeMarketplace/ProductDetail' },
   { path: '/help', icon: 'smile', component: './HelpDocumentation'},
+  { path: '/profile', icon: 'user', component: './Profile'},
   {
     path: '/admin',
     icon: 'crown',

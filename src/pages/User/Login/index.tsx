@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Card, 
   Input, 
@@ -7,26 +7,111 @@ import {
   Typography, 
   Space, 
   Form,
-  message
+  message,
+  Alert
 } from "antd";
 import { 
   WechatOutlined, 
-  QrcodeOutlined
+  QrcodeOutlined,
+  ThunderboltOutlined
 } from '@ant-design/icons';
+import { userLoginByWxOpenUsingGet } from '@/services/backend/userController';
+import { useModel, history } from '@umijs/max';
 
 const { Title, Text } = Typography;
+
+// 开发环境固定验证码
+const DEV_CODE = '123456';
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const { setInitialState } = useModel('@@initialState');
+
+  // 从URL参数获取验证码提示
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const showCode = urlParams.get('showCode');
+    if (showCode === 'true') {
+      message.info({
+        content: `开发验证码：${DEV_CODE}（可直接使用此验证码登录）`,
+        duration: 5,
+        key: 'dev-code'
+      });
+    }
+  }, []);
 
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      message.success(`登录成功！验证码：${values.code}`);
-    } catch (error) {
-      message.error('登录失败，请重试');
+      // 如果是开发验证码，直接模拟登录成功
+      if (values.code === DEV_CODE) {
+        // 调用登录API
+        const res = await userLoginByWxOpenUsingGet({
+          code: DEV_CODE
+        });
+        
+        if (res.data) {
+          message.success('登录成功！');
+          // 保存用户信息
+          setInitialState({
+            currentUser: res.data,
+          });
+          // 跳转到之前的页面或首页
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+        } else {
+          // 如果API返回失败，使用模拟数据
+          const mockUser: API.LoginUserVO = {
+            id: 'dev-user-001',
+            userName: '开发用户',
+            userAvatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+            userRole: 'user',
+            userProfile: '开发测试用户'
+          };
+          setInitialState({
+            currentUser: mockUser,
+          });
+          message.success('登录成功！（开发模式）');
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+        }
+      } else {
+        // 普通验证码登录
+        const res = await userLoginByWxOpenUsingGet({
+          code: values.code
+        });
+        
+        if (res.data) {
+          message.success('登录成功！');
+          setInitialState({
+            currentUser: res.data,
+          });
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+        } else {
+          message.error('验证码错误或已过期');
+        }
+      }
+    } catch (error: any) {
+      // 如果API调用失败，开发验证码仍然可以登录
+      if (values.code === DEV_CODE) {
+        const mockUser: API.LoginUserVO = {
+          id: 'dev-user-001',
+          userName: '开发用户',
+          userAvatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+          userRole: 'user',
+          userProfile: '开发测试用户'
+        };
+        setInitialState({
+          currentUser: mockUser,
+        });
+        message.success('登录成功！（开发模式）');
+        const urlParams = new URL(window.location.href).searchParams;
+        history.push(urlParams.get('redirect') || '/');
+      } else {
+        message.error(`登录失败：${error.message || '请重试'}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -123,6 +208,21 @@ const Login: React.FC = () => {
               </Button>
             </Form.Item>
           </Form>
+
+          {/* 开发验证码提示 */}
+          <Alert
+            message={
+              <Space>
+                <ThunderboltOutlined />
+                <Text strong>开发验证码：{DEV_CODE}</Text>
+              </Space>
+            }
+            description="开发环境可直接使用此验证码登录，无需扫码"
+            type="info"
+            showIcon
+            style={{ fontSize: '12px' }}
+            closable
+          />
 
           {/* 提示信息 */}
           <div style={{ textAlign: 'center' }}>

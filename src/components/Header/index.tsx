@@ -6,7 +6,7 @@ import {
   QuestionCircleOutlined, 
   FileTextOutlined, 
   SoundOutlined, 
-  ContactsOutlined,
+  UserOutlined,
   RightOutlined,
   NotificationOutlined,
   RocketOutlined,
@@ -55,10 +55,10 @@ const Header: React.FC = () => {
   const navItems = [
     { icon: <CloudOutlined />, label: '算力集市', key: 'market', path: '/market' },
     { icon: <DatabaseOutlined />, label: '社区', key: 'resources', path: '/community' },
-    { icon: <QuestionCircleOutlined />, label: '合作伙伴', key: 'product', path: '/partner' }, // 合作伙伴页面路径
-    { icon: <FileTextOutlined />, label: '高校解决方案', key: 'news', path: '/solution' },
+    { icon: <QuestionCircleOutlined />, label: '招募算力同盟', key: 'product', path: '/partner' }, // 合作伙伴页面路径
+    { icon: <FileTextOutlined />, label: '团队解决方案', key: 'news', path: '/solution' },
     { icon: <SoundOutlined />, label: '帮助文档', key: 'help', path: '/help' },
-    { icon: <ContactsOutlined />, label: '联系我们', key: 'contact', path: '/contact' },
+    { icon: <UserOutlined />, label: '个人中心', key: 'profile', path: '/profile' },
   ];
 
   // 处理导航项点击事件
