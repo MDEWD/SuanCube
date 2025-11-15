@@ -273,7 +273,7 @@ const ProductDetail: React.FC = () => {
             >
               <Descriptions.Item label="GPU类型">{product.name}</Descriptions.Item>
               <Descriptions.Item label="GPU型号">{product.model}</Descriptions.Item>
-              <Descriptions.Item label="可用性">
+              <Descriptions.Item label="库存">
                 {product.gpuAvailable}/{product.gpuTotal}
               </Descriptions.Item>
               <Descriptions.Item label="地区">{product.region}</Descriptions.Item>
