@@ -179,3 +179,67 @@ export async function updateMyUserUsingPost(
     ...(options || {}),
   });
 }
+
+/** 获取登录二维码 GET /api/user/qr-code */
+export async function getQrCodeUsingGet(options?: { [key: string]: any }) {
+  return request<{
+    code?: number;
+    message?: string;
+    data?: {
+      ticket?: string;
+      qrCodeUrl?: string;
+      expireSeconds?: number;
+    };
+  }>('/user/qr-code', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+/** 检查Ticket是否已扫描 GET /api/user/check-ticket */
+export async function checkTicketUsingGet(
+  params: {
+    ticket?: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<{
+    code?: number;
+    message?: string;
+    data?: {
+      scanned?: string;
+      openId?: string;
+    };
+  }>('/api/user/check-ticket', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 使用验证码登录 POST /api/user/login */
+export async function userLoginByCodeUsingPost(
+  body: {
+    code?: string;
+    openId?: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<{
+    code?: number;
+    message?: string;
+    data?: {
+      token?: string;
+      user?: API.LoginUserVO;
+    };
+  }>('/api/user/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

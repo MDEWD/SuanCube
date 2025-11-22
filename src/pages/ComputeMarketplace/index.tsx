@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
 import { 
   Card, 
@@ -24,8 +24,10 @@ import {
   message,
   InputNumber,
   Grid,
-  Drawer
+  Drawer,
+  Spin
 } from 'antd';
+import { listGpuInstanceByPageUsingPost } from '@/services/backend/gpuInstanceController';
 
 const { useBreakpoint } = Grid;
 import { 
@@ -90,8 +92,8 @@ interface PublishFormData {
   images: any[];
 }
 
-// 实例数据（合并租赁专区和官方推荐）
-export const gpuInstances: GPUInstance[] = [
+// 默认GPU实例数据（当API失败时使用）
+const defaultGpuInstances: GPUInstance[] = [
   // 租赁专区商品
   {
     id: '1',
@@ -279,9 +281,65 @@ const ComputeMarketplace: React.FC = () => {
   const [selectedGPUCount, setSelectedGPUCount] = useState<string>('all');
   const [publishModalVisible, setPublishModalVisible] = useState(false);
   const [filterDrawerVisible, setFilterDrawerVisible] = useState(false);
+  const [gpuInstances, setGpuInstances] = useState<GPUInstance[]>(defaultGpuInstances);
+  const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
+
+  useEffect(() => {
+    loadGpuInstances();
+  }, [activeTab]);
+
+  const loadGpuInstances = async () => {
+    try {
+      setLoading(true);
+      const type = activeTab === 'official-recommend' ? 'official-recommend' : 'lease';
+      const res = await listGpuInstanceByPageUsingPost({
+        current: 1,
+        pageSize: 100,
+        type: type
+      } as any);
+      if (res?.data?.records && res.data.records.length > 0) {
+        const instances = res.data.records.map((item: any) => ({
+          id: item.id || item.name,
+          name: item.name || item.gpuType,
+          model: item.model || item.gpuModel,
+          availableUntil: item.availableUntil || item.availableDate || '2025-12-31',
+          rating: item.rating || 4,
+          gpuAvailable: item.gpuAvailable || item.availableCount || 0,
+          gpuTotal: item.gpuTotal || item.totalCount || 0,
+          cpu: item.cpu || '',
+          memory: item.memory || '',
+          systemDisk: item.systemDisk || item.systemStorage || '',
+          dataDisk: item.dataDisk || item.dataStorage || '',
+          maxCudaVersion: item.maxCudaVersion || item.cudaVersion || '',
+          price: item.price || 0,
+          tags: item.tags ? (Array.isArray(item.tags) ? item.tags : item.tags.split(',')) : [],
+          region: item.region || item.location || '',
+          gpuCountType: item.gpuCountType || `${item.gpuTotal || 0}卡`,
+          bandwidth: item.bandwidth || '',
+          driverVersion: item.driverVersion || '',
+          applicationScenes: item.applicationScenes ? (Array.isArray(item.applicationScenes) ? item.applicationScenes : item.applicationScenes.split(',')) : [],
+          dataCenterLocation: item.dataCenterLocation || item.location || '',
+          dataCenterImages: item.dataCenterImages ? (Array.isArray(item.dataCenterImages) ? item.dataCenterImages : item.dataCenterImages.split(',')) : [],
+          isNewDataCenter: item.isNewDataCenter || false,
+          dataCenterDescription: item.dataCenterDescription || '',
+          type: item.type || type,
+          isHot: item.isHot || false,
+          isNew: item.isNew || false
+        }));
+        setGpuInstances(instances.length > 0 ? instances : defaultGpuInstances);
+      } else {
+        setGpuInstances(defaultGpuInstances);
+      }
+    } catch (error) {
+      console.error('加载GPU实例失败:', error);
+      setGpuInstances(defaultGpuInstances);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 筛选选项
   const gpuTypes = [
@@ -431,7 +489,12 @@ const ComputeMarketplace: React.FC = () => {
 
   return (
     <div style={{ padding: isMobile ? '12px' : '24px', background: '#f5f5f5', minHeight: '100vh' }}>
-      
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <>
       {/* 顶部专区标签和发布按钮 */}
       <Card style={{ marginBottom: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', flexWrap: 'wrap' }}>
@@ -973,12 +1036,14 @@ const ComputeMarketplace: React.FC = () => {
         {filterPanel}
       </Drawer>
 
-      <style jsx>{`
+      <style>{`
         .gpu-instance-card:hover {
           transform: translateY(-4px);
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
       `}</style>
+        </>
+      )}
     </div>
   );
 };

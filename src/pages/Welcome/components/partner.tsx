@@ -1,8 +1,10 @@
-import { Typography } from 'antd';
-import React from 'react';
+import { Typography, Spin } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { listPartnersUsingGet } from '@/services/backend/partnerController';
+
 const { Title } = Typography;
 
-// 导入合作伙伴logo图片
+// 导入合作伙伴logo图片（作为默认数据）
 import bodesi from '@/assets/博思芯宇.png';
 import telecom from '@/assets/电信.png';
 import uestc from '@/assets/电子科技大学.png';
@@ -21,8 +23,37 @@ import polyu from '@/assets/香港理工大学.png';
 import nus from '@/assets/新加坡国立大学.png';
 import wut from '@/assets/武汉理工大学.png';
 
-// 合作伙伴数据
-const partnersData = [
+// 合作伙伴数据类型
+interface PartnerItem {
+  id: number | string;
+  name: string;
+  logo: string;
+  alt?: string;
+}
+
+// Logo映射表（用于根据名称匹配本地图片）
+const logoMap: { [key: string]: string } = {
+  '博思芯宇': bodesi,
+  '中国电信': telecom,
+  '电子科技大学': uestc,
+  '航锦科技': hangjin,
+  '北京航空航天大学': beihang,
+  '联通云': unicom,
+  '佳讯飞鸿': jiaxun,
+  '上海大学': shanghai,
+  '趣算云': qusuan,
+  '南方科技大学': sustech,
+  '优刻得': ucloud,
+  '移动云': mobile,
+  '中国科学院': cas,
+  '香港大学': hku,
+  '香港理工大学': polyu,
+  '新加坡国立大学': nus,
+  '武汉理工大学': wut,
+};
+
+// 默认合作伙伴数据
+const defaultPartnersData: PartnerItem[] = [
     { id: 1, name: '博思芯宇', logo: bodesi, alt: '博思芯宇 logo' },
     { id: 2, name: '中国电信', logo: telecom, alt: '中国电信 logo' },
     { id: 3, name: '电子科技大学', logo: uestc, alt: '电子科技大学 logo' },
@@ -44,11 +75,49 @@ const partnersData = [
 
 // 合作伙伴展示组件
 const Partner: React.FC = () => {
+    const [partnersData, setPartnersData] = useState<PartnerItem[]>(defaultPartnersData);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      loadPartners();
+    }, []);
+
+    const loadPartners = async () => {
+      try {
+        setLoading(true);
+        const res = await listPartnersUsingGet({ current: 1, pageSize: 50 });
+        if (res?.data?.records && res.data.records.length > 0) {
+          const partners = res.data.records.map((item: any) => ({
+            id: item.id || item.name,
+            name: item.name,
+            logo: item.logo || item.logoUrl || logoMap[item.name] || '',
+            alt: `${item.name} logo`
+          }));
+          setPartnersData(partners);
+        } else {
+          setPartnersData(defaultPartnersData);
+        }
+      } catch (error) {
+        console.error('加载合作伙伴失败:', error);
+        setPartnersData(defaultPartnersData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     // 复制数据以实现无缝循环（复制两次，确保有足够的内容滚动）
     const duplicatedPartners = [...partnersData, ...partnersData];
     // 计算单个logo的宽度（200px + 16px gap）
     const itemWidth = 216;
     const totalWidth = partnersData.length * itemWidth;
+
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '80px 40px' }}>
+          <Spin size="large" />
+        </div>
+      );
+    }
 
     return (
       <div style={{

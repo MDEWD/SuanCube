@@ -1,5 +1,6 @@
-import { Typography, Row, Col, Card, Grid } from 'antd';
-import React from 'react';
+import { Typography, Row, Col, Card, Grid, Spin } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { getHotProductsUsingGet } from '@/services/backend/productController';
 
 const { useBreakpoint } = Grid;
 import { 
@@ -8,8 +9,18 @@ import {
 
 const { Title, Text } = Typography;
 
-// 商品数据
-const productData = [
+// 商品数据类型
+interface ProductItem {
+  id: number | string;
+  name: string;
+  price: string;
+  image: string;
+  views?: number;
+  vendor?: string;
+}
+
+// 默认商品数据
+const defaultProductData: ProductItem[] = [
     {
       id: 1,
       name: '微星 RTX5090 32G 风扇卡',
@@ -48,7 +59,46 @@ const productData = [
 const ProductDisplay: React.FC = () => {
     const screens = useBreakpoint();
     const isMobile = !screens.md;
+    const [productData, setProductData] = useState<ProductItem[]>(defaultProductData);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      loadProducts();
+    }, []);
+
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await getHotProductsUsingGet({ limit: 4 });
+        if (res?.data && res.data.length > 0) {
+          const products = res.data.map((item: any) => ({
+            id: item.id,
+            name: item.name || item.title,
+            price: item.price ? (typeof item.price === 'number' ? `${(item.price / 10000).toFixed(2)}万` : item.price) : '面议',
+            image: item.image || item.imageUrl || item.coverImage || '',
+            views: item.views || item.viewCount || 0,
+            vendor: item.vendor || item.sellerName || ''
+          }));
+          setProductData(products);
+        } else {
+          setProductData(defaultProductData);
+        }
+      } catch (error) {
+        console.error('加载产品失败:', error);
+        setProductData(defaultProductData);
+      } finally {
+        setLoading(false);
+      }
+    };
     
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+          <Spin size="large" />
+        </div>
+      );
+    }
+
     return (
       <div style={{ 
         padding: isMobile ? '10px 16px 20px' : '10px 40px 20px',
@@ -66,7 +116,14 @@ const ProductDisplay: React.FC = () => {
         
         {/* 商品网格布局 */}
         <Row gutter={[12, 12]}>
-          {productData.map(product => (
+          {productData.length === 0 ? (
+            <Col span={24}>
+              <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                暂无产品数据
+              </div>
+            </Col>
+          ) : (
+            productData.map(product => (
             <Col xs={12} sm={8} md={6} key={product.id}>
               <Card 
                 hoverable
@@ -133,7 +190,8 @@ const ProductDisplay: React.FC = () => {
                 </div>
               </Card>
             </Col>
-          ))}
+            ))
+          )}
         </Row>
       </div>
     );

@@ -1,0 +1,41 @@
+// @ts-ignore
+/* eslint-disable */
+import { request } from '@umijs/max';
+
+/** 获取订单列表 POST /api/order/list/page */
+export async function listOrderByPageUsingPost(
+  body: {
+    current?: number;
+    pageSize?: number;
+    userId?: string;
+    type?: 'purchase' | 'sale';
+    [key: string]: any;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponsePagePostVO_>('/api/order/list/page', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 获取订单详情 GET /api/order/get */
+export async function getOrderByIdUsingGet(
+  params: {
+    id?: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponsePostVO_>('/api/order/get', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+

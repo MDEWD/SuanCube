@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, history, Link } from 'umi';
 import { 
   Card, 
@@ -18,7 +18,8 @@ import {
   Tooltip,
   Input,
   message,
-  Grid
+  Grid,
+  Spin
 } from 'antd';
 
 const { useBreakpoint } = Grid;
@@ -42,7 +43,7 @@ dayjs.extend(localizedFormat);
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-import { gpuInstances } from '../index';
+import { getGpuInstanceByIdUsingGet } from '@/services/backend/gpuInstanceController';
 
 // 类型定义
 interface GPUInstance {
@@ -116,8 +117,56 @@ const ProductDetail: React.FC = () => {
   const [newContent, setNewContent] = useState('');
   const [newRating, setNewRating] = useState<number>(5);
   const [submitting, setSubmitting] = useState(false);
-  
-  const product = gpuInstances.find(instance => instance.id === id);
+  const [product, setProduct] = useState<GPUInstance | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProduct();
+  }, [id]);
+
+  const loadProduct = async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const res = await getGpuInstanceByIdUsingGet({ id });
+      if (res?.data) {
+        const item = res.data;
+        setProduct({
+          id: item.id || id,
+          name: item.name || item.gpuType || '',
+          model: item.model || item.gpuModel || '',
+          availableUntil: item.availableUntil || item.availableDate || '2025-12-31',
+          rating: item.rating || 4,
+          gpuAvailable: item.gpuAvailable || item.availableCount || 0,
+          gpuTotal: item.gpuTotal || item.totalCount || 0,
+          cpu: item.cpu || '',
+          memory: item.memory || '',
+          systemDisk: item.systemDisk || item.systemStorage || '',
+          dataDisk: item.dataDisk || item.dataStorage || '',
+          maxCudaVersion: item.maxCudaVersion || item.cudaVersion || '',
+          price: item.price || 0,
+          tags: item.tags ? (Array.isArray(item.tags) ? item.tags : item.tags.split(',')) : [],
+          region: item.region || item.location || '',
+          gpuCountType: item.gpuCountType || `${item.gpuTotal || 0}卡`,
+          bandwidth: item.bandwidth || '',
+          driverVersion: item.driverVersion || '',
+          applicationScenes: item.applicationScenes ? (Array.isArray(item.applicationScenes) ? item.applicationScenes : item.applicationScenes.split(',')) : [],
+          dataCenterLocation: item.dataCenterLocation || item.location || '',
+          dataCenterImages: item.dataCenterImages ? (Array.isArray(item.dataCenterImages) ? item.dataCenterImages : item.dataCenterImages.split(',')) : [],
+          isNewDataCenter: item.isNewDataCenter || false,
+          dataCenterDescription: item.dataCenterDescription || '',
+          isHot: item.isHot || false,
+          isNew: item.isNew || false
+        });
+      }
+    } catch (error) {
+      console.error('加载产品详情失败:', error);
+      message.error('加载产品详情失败');
+      history.push('/market');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!newContent.trim()) {
@@ -170,6 +219,14 @@ const ProductDetail: React.FC = () => {
       }
     }));
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (

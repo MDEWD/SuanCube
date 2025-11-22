@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Layout,
   Menu,
@@ -18,7 +18,9 @@ import {
   Typography,
   Dropdown,
   Badge,
-  Popover
+  Popover,
+  Spin,
+  message
 } from 'antd';
 import {
   SearchOutlined,
@@ -36,6 +38,7 @@ import {
 } from '@ant-design/icons';
 // import Header from '../Header';
 import ReactMarkdown from 'react-markdown';
+import { listPostVoByPageUsingPost } from '@/services/backend/postController';
 import './index.css';
 
 const { Content, Sider } = Layout;
@@ -43,8 +46,8 @@ const { TextArea } = Input;
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-// 模拟数据
-const mockPosts = [
+// 默认数据（当API失败时使用）
+const defaultMockPosts = [
   {
     id: 1,
     title: '如何优化GPU计算中的内存使用？',
@@ -83,7 +86,7 @@ const mockPosts = [
   }
 ];
 
-const mockAnswers = [
+const defaultMockAnswers = [
   {
     id: 1,
     content: '可以尝试使用混合精度训练，并检查是否有不必要的中间变量被保存。另外，梯度累积也是一个有效的技术。\n\n```python\n# 混合精度训练示例\nfrom torch.cuda.amp import autocast, GradScaler\n\nscaler = GradScaler()\n\nwith autocast():\n    output = model(input)\n    loss = loss_fn(output, target)\n\nscaler.scale(loss).backward()\nscaler.step(optimizer)\nscaler.update()\n```',
@@ -135,6 +138,52 @@ const CloudComputingCommunity: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mockPosts, setMockPosts] = useState(defaultMockPosts);
+  const [mockAnswers, setMockAnswers] = useState(defaultMockAnswers);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    try {
+      setLoading(true);
+      const res = await listPostVoByPageUsingPost({
+        current: 1,
+        pageSize: 20,
+        sortField: 'createTime',
+        sortOrder: 'desc'
+      });
+      if (res?.data?.records && res.data.records.length > 0) {
+        const posts = res.data.records.map((item: API.PostVO) => ({
+          id: item.id,
+          title: item.title || '',
+          content: item.content || '',
+          author: {
+            name: item.user?.userName || '匿名用户',
+            avatar: item.user?.userAvatar || '',
+            isExpert: item.user?.userRole === 'admin' || item.user?.userRole === 'partner',
+            reputation: 0
+          },
+          tags: item.tagList || [],
+          createdAt: item.createTime || new Date().toISOString().split('T')[0],
+          voteCount: item.thumbNum || 0,
+          answerCount: 0, // 后端暂无回答数，需要单独接口
+          viewCount: 0, // 后端暂无浏览数
+          hasAcceptedAnswer: false
+        }));
+        setMockPosts(posts.length > 0 ? posts : defaultMockPosts);
+      } else {
+        setMockPosts(defaultMockPosts);
+      }
+    } catch (error) {
+      console.error('加载帖子失败:', error);
+      setMockPosts(defaultMockPosts);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const navigateTo = (page: string, post?: any) => {
     setCurrentPage(page);
@@ -178,11 +227,16 @@ const CloudComputingCommunity: React.FC = () => {
       
       <Row gutter={16}>
         <Col span={18}>
-          <List
-            itemLayout="vertical"
-            size="large"
-            dataSource={mockPosts}
-            renderItem={(item) => (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <Spin size="large" />
+            </div>
+          ) : (
+            <List
+              itemLayout="vertical"
+              size="large"
+              dataSource={mockPosts}
+              renderItem={(item) => (
               <List.Item
                 key={item.title}
                 actions={[
@@ -225,6 +279,7 @@ const CloudComputingCommunity: React.FC = () => {
               </List.Item>
             )}
           />
+          )}
         </Col>
         
         <Col span={6}>
