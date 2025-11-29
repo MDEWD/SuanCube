@@ -192,11 +192,12 @@ export async function getQrCodeUsingGet(options?: { [key: string]: any }) {
     };
   }>('/user/qr-code', {
     method: 'GET',
+    skipErrorHandler: true, // 跳过全局错误处理，手动处理响应
     ...(options || {}),
   });
 }
 
-/** 检查Ticket是否已扫描 GET /api/user/check-ticket */
+/** 检查Ticket是否已扫描 GET /api/wechat/check-ticket */
 export async function checkTicketUsingGet(
   params: {
     ticket?: string;
@@ -210,11 +211,12 @@ export async function checkTicketUsingGet(
       scanned?: string;
       openId?: string;
     };
-  }>('/api/user/check-ticket', {
+  }>('/user/check-ticket', {
     method: 'GET',
     params: {
       ...params,
     },
+    skipErrorHandler: true, // 轮询接口跳过全局错误处理
     ...(options || {}),
   });
 }
@@ -234,7 +236,7 @@ export async function userLoginByCodeUsingPost(
       token?: string;
       user?: API.LoginUserVO;
     };
-  }>('/api/user/login', {
+  }>('/user/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

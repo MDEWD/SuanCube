@@ -4,7 +4,8 @@ import {
   BankOutlined,
   RocketOutlined,
   RobotOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 import { listCasesUsingGet } from '@/services/backend/caseController';
 
@@ -43,6 +44,7 @@ const CaseStudy: React.FC = () => {
   const isMobile = !screens.md;
   const [caseStudies, setCaseStudies] = useState<CaseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredCardId, setHoveredCardId] = useState<string | number | null>(null);
 
   useEffect(() => {
     loadCases();
@@ -115,67 +117,62 @@ const CaseStudy: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '80px 40px' }}>
-        <Spin size="large" />
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: screens.md ? '0 40px' : '0 16px',
+        marginBottom: '40px'
+      }}>
+        <Card 
+          title={
+            <Space>
+              <FileTextOutlined style={{ color: '#1890ff' }} />
+              <span style={{ fontSize: '20px', fontWeight: 600 }}>案例分享</span>
+            </Space>
+          }
+          style={{ 
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          }}
+          headStyle={{ 
+            borderBottom: '1px solid #f0f0f0',
+            padding: '16px 24px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
+            <Spin size="large" />
+          </div>
+        </Card>
       </div>
     );
   }
 
   return (
     <div style={{
-      padding: '80px 40px',
-      background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%)',
-      position: 'relative',
-      overflow: 'hidden'
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: screens.md ? '0 40px' : '0 16px',
+      marginBottom: '40px'
     }}>
-      {/* 背景装饰 */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'radial-gradient(circle at 20% 30%, rgba(24, 144, 255, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(114, 46, 209, 0.03) 0%, transparent 50%)',
-        pointerEvents: 'none'
-      }} />
+      {/* 案例分享部分 */}
+      <Card 
+        title={
+          <Space>
+            <FileTextOutlined style={{ color: '#1890ff' }} />
+            <span style={{ fontSize: '20px', fontWeight: 600 }}>案例分享</span>
+          </Space>
+        }
+        style={{ 
+          borderRadius: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        }}
+        headStyle={{ 
+          borderBottom: '1px solid #f0f0f0',
+          padding: '16px 24px'
+        }}
+      >
 
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        {/* 标题部分 */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '60px'
-        }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            padding: '16px 40px',
-            borderRadius: '50px',
-            boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <Title level={2} style={{
-              color: '#ffffff',
-              marginBottom: '0',
-              fontSize: '32px',
-              fontWeight: 700,
-              textShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              letterSpacing: '2px',
-              position: 'relative',
-              zIndex: 1
-            }}>
-              客户案例分享
-            </Title>
-          </div>
-        </div>
-
-        {/* 案例卡片 */}
-        <Row gutter={[24, 24]} justify="center">
+        <Row gutter={[24, 24]}>
           {caseStudies.length === 0 ? (
             <Col span={24}>
               <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
@@ -183,210 +180,200 @@ const CaseStudy: React.FC = () => {
               </div>
             </Col>
           ) : (
-            caseStudies.map((caseItem) => (
-            <Col xs={24} sm={24} md={8} key={caseItem.id}>
-              <Card
-                hoverable
-                style={{
-                  height: '100%',
-                  borderRadius: '16px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                  border: 'none',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)'
-                }}
-                bodyStyle={{
-                  padding: '32px',
-                  position: 'relative',
-                  zIndex: 1
-                }}
-                onMouseEnter={(e) => {
-                  const card = e.currentTarget;
-                  card.style.transform = 'translateY(-8px)';
-                  card.style.boxShadow = '0 12px 32px rgba(0,0,0,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  const card = e.currentTarget;
-                  card.style.transform = 'translateY(0)';
-                  card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-                }}
-              >
-                {/* 简洁版内容 */}
-                <div 
-                  className="brief-content"
-                  style={{
-                    transition: 'opacity 0.4s ease'
-                  }}
-                >
-                  <div style={{
-                    textAlign: 'center',
-                    marginBottom: '24px'
-                  }}>
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '16px',
-                      background: `linear-gradient(135deg, ${caseItem.color}15 0%, ${caseItem.color}05 100%)`,
-                      marginBottom: '16px'
-                    }}>
-                      {caseItem.icon}
-                    </div>
-                    <Tag
-                      color={caseItem.color}
-                      style={{
-                        fontSize: '12px',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        marginBottom: '12px'
-                      }}
-                    >
-                      {caseItem.category}
-                    </Tag>
-                    <Title level={4} style={{
-                      marginTop: '12px',
-                      marginBottom: '16px',
-                      fontSize: '20px',
-                      fontWeight: 600,
-                      color: '#1f2329'
-                    }}>
-                      {caseItem.title}
-                    </Title>
-                  </div>
-                  <Paragraph
+            <>
+              {caseStudies.map((caseItem) => {
+                const isHovered = hoveredCardId === caseItem.id;
+                return (
+                  <Col xs={24} sm={24} md={8} key={caseItem.id}>
+                  <Card
+                    hoverable
                     style={{
-                      color: '#666',
-                      fontSize: '14px',
-                      lineHeight: 1.8,
-                      marginBottom: '20px',
-                      minHeight: '80px'
-                    }}
-                    ellipsis={{ rows: 4, expandable: false }}
-                  >
-                    {caseItem.brief}
-                  </Paragraph>
-                  <Space wrap style={{ justifyContent: 'center', width: '100%' }}>
-                    {caseItem.tags.map((tag, index) => (
-                      <Tag
-                        key={index}
-                        style={{
-                          background: `${caseItem.color}10`,
-                          color: caseItem.color,
-                          border: `1px solid ${caseItem.color}30`,
-                          borderRadius: '12px',
-                          padding: '2px 10px',
-                          fontSize: '12px'
-                        }}
-                      >
-                        {tag}
-                      </Tag>
-                    ))}
-                  </Space>
-                </div>
-
-                {/* 详细版内容（悬浮时显示） */}
-                <div
-                  className="detail-content"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    padding: '32px',
-                    background: `linear-gradient(135deg, ${caseItem.color}08 0%, #ffffff 100%)`,
-                    opacity: 0,
-                    pointerEvents: 'none',
-                    transition: 'opacity 0.4s ease',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    zIndex: 2,
-                    borderRadius: '16px'
-                  }}
-                >
-                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '56px',
-                      height: '56px',
+                      minHeight: '400px',
+                      height: 'auto',
                       borderRadius: '12px',
-                      background: `linear-gradient(135deg, ${caseItem.color}20 0%, ${caseItem.color}10 100%)`,
-                      marginBottom: '16px'
-                    }}>
-                      {caseItem.icon}
-                    </div>
-                    <Tag
-                      color={caseItem.color}
-                      style={{
-                        fontSize: '12px',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        marginBottom: '12px'
-                      }}
-                    >
-                      {caseItem.category}
-                    </Tag>
-                    <Title level={4} style={{
-                      marginTop: '12px',
-                      marginBottom: '16px',
-                      fontSize: '20px',
-                      fontWeight: 600,
-                      color: '#1f2329'
-                    }}>
-                      {caseItem.title}
-                    </Title>
-                  </div>
-                  <Paragraph
-                    style={{
-                      color: '#333',
-                      fontSize: '14px',
-                      lineHeight: 1.9,
-                      textAlign: 'left',
-                      marginBottom: '20px'
+                      boxShadow: isHovered ? '0 4px 16px rgba(0,0,0,0.12)' : '0 2px 8px rgba(0,0,0,0.06)',
+                      border: '1px solid #f0f0f0',
+                      transition: 'all 0.3s ease',
+                      position: 'relative',
+                      overflow: 'visible',
+                      transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                      zIndex: isHovered ? 10 : 1
+                    }}
+                    bodyStyle={{
+                      padding: '24px',
+                      position: 'relative',
+                      zIndex: 1,
+                      minHeight: '350px'
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredCardId(caseItem.id);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredCardId(null);
                     }}
                   >
-                    {caseItem.detail}
-                  </Paragraph>
-                  <div style={{
-                    textAlign: 'center',
-                    marginTop: 'auto',
-                    paddingTop: '16px'
-                  }}>
-                    <Space>
-                      <CheckCircleOutlined style={{ color: caseItem.color }} />
-                      <Text style={{ color: caseItem.color, fontSize: '12px', fontWeight: 500 }}>
-                        成功案例
-                      </Text>
-                    </Space>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-            ))
+                    {/* 简洁版内容 */}
+                    <div 
+                      className="brief-content"
+                      style={{
+                        transition: 'opacity 0.4s ease',
+                        opacity: isHovered ? 0 : 1,
+                        pointerEvents: isHovered ? 'none' : 'auto'
+                      }}
+                    >
+                      <div style={{
+                        textAlign: 'center',
+                        marginBottom: '20px'
+                      }}>
+                        <div style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '56px',
+                          height: '56px',
+                          borderRadius: '12px',
+                          background: `${caseItem.color}10`,
+                          marginBottom: '12px'
+                        }}>
+                          {caseItem.icon}
+                        </div>
+                        <Tag
+                          color={caseItem.color}
+                          style={{
+                            fontSize: '12px',
+                            padding: '2px 8px',
+                            marginBottom: '8px'
+                          }}
+                        >
+                          {caseItem.category}
+                        </Tag>
+                        <Title level={4} style={{
+                          marginTop: '8px',
+                          marginBottom: '12px',
+                          fontSize: '18px',
+                          fontWeight: 600
+                        }}>
+                          {caseItem.title}
+                        </Title>
+                      </div>
+                      <Paragraph
+                        style={{
+                          color: '#666',
+                          fontSize: '14px',
+                          lineHeight: 1.6,
+                          marginBottom: '16px',
+                          minHeight: '72px'
+                        }}
+                        ellipsis={{ rows: 3, expandable: false }}
+                      >
+                        {caseItem.brief}
+                      </Paragraph>
+                      <Space wrap style={{ justifyContent: 'center', width: '100%' }}>
+                        {caseItem.tags.map((tag, index) => (
+                          <Tag
+                            key={index}
+                            style={{
+                              background: `${caseItem.color}10`,
+                              color: caseItem.color,
+                              border: `1px solid ${caseItem.color}20`,
+                              fontSize: '12px'
+                            }}
+                          >
+                            {tag}
+                          </Tag>
+                        ))}
+                      </Space>
+                    </div>
+
+                    {/* 详细版内容（悬浮时显示） */}
+                    <div
+                      className="detail-content"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        padding: '24px',
+                        paddingBottom: '60px',
+                        background: `linear-gradient(135deg, ${caseItem.color}05 0%, #ffffff 100%)`,
+                        opacity: isHovered ? 1 : 0,
+                        pointerEvents: isHovered ? 'auto' : 'none',
+                        transition: 'opacity 0.3s ease',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        zIndex: 2,
+                        borderRadius: '12px',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <div>
+                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                          <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            background: `${caseItem.color}15`,
+                            marginBottom: '12px'
+                          }}>
+                            {caseItem.icon}
+                          </div>
+                          <Tag
+                            color={caseItem.color}
+                            style={{
+                              fontSize: '12px',
+                              padding: '2px 8px',
+                              marginBottom: '8px'
+                            }}
+                          >
+                            {caseItem.category}
+                          </Tag>
+                          <Title level={4} style={{
+                            marginTop: '8px',
+                            marginBottom: '12px',
+                            fontSize: '18px',
+                            fontWeight: 600
+                          }}>
+                            {caseItem.title}
+                          </Title>
+                        </div>
+                        <Paragraph
+                          style={{
+                            color: '#333',
+                            fontSize: '14px',
+                            lineHeight: 1.7,
+                            textAlign: 'left',
+                            marginBottom: '0'
+                          }}
+                        >
+                          {caseItem.detail}
+                        </Paragraph>
+                      </div>
+                      <div style={{
+                        textAlign: 'center',
+                        paddingTop: '12px',
+                        flexShrink: 0
+                      }}>
+                        <Space>
+                          <CheckCircleOutlined style={{ color: caseItem.color }} />
+                          <Text style={{ color: caseItem.color, fontSize: '12px', fontWeight: 500 }}>
+                            成功案例
+                          </Text>
+                        </Space>
+                      </div>
+                    </div>
+                  </Card>
+                  </Col>
+                );
+              })}
+            </>
           )}
         </Row>
-      </div>
-
-      {/* 样式 */}
-      <style>{`
-        .ant-card {
-          position: relative;
-        }
-        .ant-card:hover .brief-content {
-          opacity: 0;
-        }
-        .ant-card:hover .detail-content {
-          opacity: 1 !important;
-          pointer-events: auto;
-        }
-      `}</style>
+      </Card>
     </div>
   );
 };

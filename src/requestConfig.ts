@@ -18,7 +18,8 @@ const isDev = process.env.NODE_ENV === 'development';
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const requestConfig: RequestConfig = {
-  baseURL: isDev ? BACKEND_HOST_LOCAL : BACKEND_HOST_PROD,
+  // 开发环境使用相对路径，通过代理转发；生产环境使用完整URL
+  baseURL: isDev ? '/api' : BACKEND_HOST_PROD,
   withCredentials: true,
 
   // 请求拦截器
@@ -34,6 +35,11 @@ export const requestConfig: RequestConfig = {
     (response) => {
       // 请求地址
       const requestPath: string = response.config.url ?? '';
+
+      // 如果请求配置了 skipErrorHandler，直接返回响应
+      if (response.config.skipErrorHandler) {
+        return response;
+      }
 
       // 响应
       const { data } = response as unknown as ResponseStructure;

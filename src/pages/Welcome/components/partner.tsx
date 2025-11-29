@@ -1,8 +1,10 @@
-import { Typography, Spin } from 'antd';
+import { Typography, Spin, Card, Space, Grid } from 'antd';
+import { TeamOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
 import { listPartnersUsingGet } from '@/services/backend/partnerController';
 
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 // 导入合作伙伴logo图片（作为默认数据）
 import bodesi from '@/assets/博思芯宇.png';
@@ -75,6 +77,7 @@ const defaultPartnersData: PartnerItem[] = [
 
 // 合作伙伴展示组件
 const Partner: React.FC = () => {
+    const screens = useBreakpoint();
     const [partnersData, setPartnersData] = useState<PartnerItem[]>(defaultPartnersData);
     const [loading, setLoading] = useState(true);
 
@@ -113,75 +116,60 @@ const Partner: React.FC = () => {
 
     if (loading) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '80px 40px' }}>
-          <Spin size="large" />
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: screens.md ? '0 40px' : '0 16px',
+          marginBottom: '40px'
+        }}>
+          <Card 
+            title={
+              <Space>
+                <TeamOutlined style={{ color: '#1890ff' }} />
+                <span style={{ fontSize: '20px', fontWeight: 600 }}>合作伙伴</span>
+              </Space>
+            }
+            style={{ 
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            }}
+            headStyle={{ 
+              borderBottom: '1px solid #f0f0f0',
+              padding: '16px 24px'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
+              <Spin size="large" />
+            </div>
+          </Card>
         </div>
       );
     }
 
     return (
       <div style={{
-        padding: '80px 40px',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #ffffff 50%, #f5f7fa 100%)',
-        marginTop: '40px',
-        overflow: 'hidden',
-        position: 'relative'
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: screens.md ? '0 40px' : '0 16px',
+        marginBottom: '40px'
       }}>
-        {/* 背景装饰 */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 20% 50%, rgba(24, 144, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(114, 46, 209, 0.05) 0%, transparent 50%)',
-          pointerEvents: 'none'
-        }} />
-        
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          {/* 标题部分 - 优化样式 */}
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '60px'
-          }}>
-            <div style={{
-              display: 'inline-block',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              padding: '16px 40px',
-              borderRadius: '50px',
-              boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              {/* 标题背景光效 */}
-              <div style={{
-                position: 'absolute',
-                top: '-50%',
-                left: '-50%',
-                width: '200%',
-                height: '200%',
-                background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                animation: 'shine 3s ease-in-out infinite'
-              }} />
-              <Title level={2} style={{
-                color: '#ffffff',
-                marginBottom: '0',
-                fontSize: '32px',
-                fontWeight: 700,
-                textShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                letterSpacing: '2px',
-                position: 'relative',
-                zIndex: 1
-              }}>
-                合作伙伴，荣耀之星
-              </Title>
-            </div>
-          </div>
+        {/* 合作伙伴部分 */}
+        <Card 
+          title={
+            <Space>
+              <TeamOutlined style={{ color: '#1890ff' }} />
+              <span style={{ fontSize: '20px', fontWeight: 600 }}>合作伙伴</span>
+            </Space>
+          }
+          style={{ 
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          }}
+          headStyle={{ 
+            borderBottom: '1px solid #f0f0f0',
+            padding: '16px 24px'
+          }}
+        >
           
           {/* 滑动容器 */}
           <div 
@@ -220,47 +208,33 @@ const Partner: React.FC = () => {
                   style={{
                     flexShrink: 0,
                     width: '200px',
-                    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                    background: '#ffffff',
                     borderRadius: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: '100px',
                     padding: '20px',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.3s ease',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)',
-                    border: '1px solid rgba(255,255,255,0.8)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    border: '1px solid #f0f0f0',
                     position: 'relative',
                     overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%)';
-                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(102, 126, 234, 0.15), 0 4px 8px rgba(0,0,0,0.1)';
-                    e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                    e.currentTarget.style.background = '#fafafa';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+                    e.currentTarget.style.borderColor = '#d9d9d9';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)';
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)';
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)';
+                    e.currentTarget.style.background = '#ffffff';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                    e.currentTarget.style.borderColor = '#f0f0f0';
                   }}
                 >
-                  {/* 容器内部光效 */}
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: '-100%',
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-                    transition: 'left 0.5s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.left = '100%';
-                  }}
-                  />
                   <img
                     src={partner.logo}
                     alt={partner.alt || partner.name}
@@ -289,16 +263,8 @@ const Partner: React.FC = () => {
                 transform: translateX(-${totalWidth}px);
               }
             }
-            @keyframes shine {
-              0%, 100% {
-                transform: translate(-50%, -50%) rotate(0deg);
-              }
-              50% {
-                transform: translate(-50%, -50%) rotate(180deg);
-              }
-            }
           `}</style>
-        </div>
+        </Card>
       </div>
     );
   };
