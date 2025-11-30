@@ -226,6 +226,8 @@ export async function userLoginByCodeUsingPost(
   body: {
     code?: string;
     openId?: string;
+    nickname?: string;
+    avatar?: string;
   },
   options?: { [key: string]: any },
 ) {

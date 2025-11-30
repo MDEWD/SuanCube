@@ -59,13 +59,14 @@ const Login: React.FC = () => {
   const [ticket, setTicket] = useState<string>('');
   const [scanned, setScanned] = useState<boolean>(false);
   const [openId, setOpenId] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('');
+  const [avatar, setAvatar] = useState<string>('');
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // 获取二维码
   const fetchQrCode = async () => {
     setQrLoading(true);
     try {
-      console.log('二维码接口响应:');
       const res = await getQrCodeUsingGet();
       console.log('二维码接口响应:', res);
       // 兼容不同的响应格式
@@ -77,12 +78,14 @@ const Login: React.FC = () => {
           setTicket(responseData.ticket || '');
           setScanned(false);
           setOpenId(''); // 重置 openId
+          setNickname(''); // 重置 nickname
+          setAvatar(''); // 重置 avatar
           form.setFieldsValue({ code: '' }); // 清空验证码输入
           // 开始轮询
           if (responseData.ticket) {
             startPolling(responseData.ticket);
           }
-          console.log('二维码接口响应:', responseData);
+          console.log('二维码接口响应:', responseData.qrCodeUrl);
         } else {
           message.error('获取二维码失败：响应数据格式错误');
         }
@@ -101,6 +104,8 @@ const Login: React.FC = () => {
             setTicket(responseData.ticket || '');
             setScanned(false);
             setOpenId(''); // 重置 openId
+            setNickname(''); // 重置 nickname
+            setAvatar(''); // 重置 avatar
             form.setFieldsValue({ code: '' }); // 清空验证码输入
             if (responseData.ticket) {
               startPolling(responseData.ticket);
@@ -151,9 +156,19 @@ const Login: React.FC = () => {
         
         // 检查是否已扫描（兼容字符串 'true' 和布尔值 true）
         const isScanned = responseData?.scanned === 'true' || responseData?.scanned === true;
-        const hasOpenId = responseData?.openId;
         
-        console.log('轮询检查结果:', { isScanned, hasOpenId, scanned: responseData?.scanned, openId: responseData?.openId });
+        // 后端返回格式: {scanned: true, userInfo: {openId, nickname, avatar}}
+        // 或者旧格式: {scanned: true, openId, nickname, avatar}
+        const userInfo = responseData?.userInfo || responseData;
+        const hasOpenId = userInfo?.openId;
+        
+        console.log('轮询检查结果:', { 
+          isScanned, 
+          hasOpenId, 
+          scanned: responseData?.scanned, 
+          openId: userInfo?.openId,
+          userInfo: userInfo
+        });
         
         if (isScanned && hasOpenId) {
           // 已扫描，停止轮询
@@ -162,11 +177,17 @@ const Login: React.FC = () => {
             pollingIntervalRef.current = null;
           }
           setScanned(true);
-          setOpenId(responseData.openId);
-          console.log('扫码成功，可以输入验证码');
+          setOpenId(userInfo.openId || '');
+          setNickname(userInfo.nickname || '');
+          setAvatar(userInfo.avatar || '');
+          console.log('扫码成功，可以输入验证码', {
+            openId: userInfo.openId,
+            nickname: userInfo.nickname,
+            avatar: userInfo.avatar
+          });
           message.success('扫码成功！请输入验证码');
         } else if (isScanned && !hasOpenId) {
-          console.warn('已扫描但缺少 openId');
+          console.warn('已扫描但缺少 openId', { responseData, userInfo });
         }
       } catch (error: any) {
         // 403 错误可能是接口路径不对或需要认证，记录但不中断轮询
@@ -220,6 +241,8 @@ const Login: React.FC = () => {
       setQrCodeUrl('');
       setTicket('');
       setOpenId('');
+      setNickname('');
+      setAvatar('');
       form.setFieldsValue({ code: '' }); // 清空验证码输入
     }
   }, [loginMode]);
@@ -257,10 +280,22 @@ const Login: React.FC = () => {
         return;
       }
 
-      const res = await userLoginByCodeUsingPost({
+      const loginParams: any = {
         code: values.code,
         openId: openId
-      });
+      };
+      
+      // 如果提供了 nickname 和 avatar，一起发送（可选字段）
+      if (nickname) {
+        loginParams.nickname = nickname;
+      }
+      if (avatar) {
+        loginParams.avatar = avatar;
+      }
+      
+      console.log('登录请求参数:', loginParams);
+      
+      const res = await userLoginByCodeUsingPost(loginParams);
       
       if (res.code === 0 && res.data) {
         // 保存token（如果后端返回了token）
