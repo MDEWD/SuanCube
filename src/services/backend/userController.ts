@@ -46,7 +46,7 @@ export async function getUserByIdUsingGet(
 
 /** getLoginUser GET /api/user/get/login */
 export async function getLoginUserUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseLoginUserVO_>('/api/user/get/login', {
+  return request<API.BaseResponseLoginUserVO_>('/user/get/login', {
     method: 'GET',
     ...(options || {}),
   });
@@ -129,7 +129,7 @@ export async function userLoginByWxOpenUsingGet(
 
 /** userLogout POST /api/user/logout */
 export async function userLogoutUsingPost(options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean_>('/api/user/logout', {
+  return request<API.BaseResponseBoolean_>('user/logout', {
     method: 'POST',
     ...(options || {}),
   });

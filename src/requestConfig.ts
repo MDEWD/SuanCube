@@ -25,7 +25,19 @@ export const requestConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
+      // 从 localStorage 获取 token
+      const token = localStorage.getItem('token');
+      
+      // 如果存在 token，添加到请求头
+      if (token && config.headers) {
+        // 根据后端要求，可能需要使用 'Authorization' 或 'token' 等字段
+        // 这里使用常见的 'Authorization: Bearer <token>' 格式
+        // 如果后端需要其他格式，可以修改这里
+        config.headers['Authorization'] = `Bearer ${token}`;
+        // 或者如果后端直接接受 token 字段：
+        // config.headers['token'] = token;
+      }
+      
       return config;
     },
   ],
@@ -37,7 +49,7 @@ export const requestConfig: RequestConfig = {
       const requestPath: string = response.config.url ?? '';
 
       // 如果请求配置了 skipErrorHandler，直接返回响应
-      if (response.config.skipErrorHandler) {
+      if ((response.config as any).skipErrorHandler) {
         return response;
       }
 

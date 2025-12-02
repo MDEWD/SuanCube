@@ -15,7 +15,8 @@ const Settings: ProLayoutProps & {
   fixedHeader: true,
   fixSiderbar: false,
   colorWeak: false,
-  title: 'SUANQ',
+  title: '算力方',
+  logo: '/mark.png',
   pwa: true,
   iconfontUrl: '',
   token: {

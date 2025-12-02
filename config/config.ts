@@ -73,11 +73,18 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'SUANQ',
+  title: '算力方',
   layout: {
     locale: true,
     ...defaultSettings,
   },
+  /**
+   * @name HTML head 中的 link 标签
+   * @description 用于设置 favicon 等
+   */
+  links: [
+    { rel: 'icon', href: '/mark.png', type: 'image/png' },
+  ],
   /**
    * @name moment2dayjs 插件
    * @description 将项目中的 moment 替换为 dayjs

@@ -13,7 +13,12 @@ import {
   SafetyOutlined,
   MenuOutlined
 } from '@ant-design/icons';
-import { Button, Popover, List, Tag, Typography, Drawer, Grid } from 'antd';
+import { Button, Popover, List, Tag, Typography, Drawer, Grid, Avatar } from 'antd';
+import { useModel } from '@umijs/max';
+import { AvatarDropdown } from '../RightContent/AvatarDropdown';
+import { userLogoutUsingPost } from '@/services/backend/userController';
+import { flushSync } from 'react-dom';
+import logo from '@/assets/logo.png';
 
 const { useBreakpoint } = Grid;
 
@@ -23,6 +28,30 @@ const Header: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const screens = useBreakpoint();
   const isMobile = !screens.md;
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
+  
+  // 退出登录处理
+  const handleLogout = async () => {
+    try {
+      await userLogoutUsingPost();
+      flushSync(() => {
+        setInitialState((s) => ({ ...s, currentUser: undefined }));
+      });
+      localStorage.removeItem('token');
+      navigate('/user/login');
+      setDrawerVisible(false);
+    } catch (error) {
+      console.error('退出登录失败:', error);
+      // 即使API调用失败，也清除本地状态
+      flushSync(() => {
+        setInitialState((s) => ({ ...s, currentUser: undefined }));
+      });
+      localStorage.removeItem('token');
+      navigate('/user/login');
+      setDrawerVisible(false);
+    }
+  };
   
   // 最新更新数据
   const updatesData = [
@@ -120,23 +149,19 @@ const Header: React.FC = () => {
         minHeight: '60px'
       }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+        <div style={{ display: 'flex', cursor: 'pointer', marginLeft: '28px' }}
          onClick={() => handleNavClick('/welcome')}
         >
-          <div style={{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#000'
-          }}>
-            SUANQ
-          </div>
-          <div style={{
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: '#333'
-          }}>
-            算立方
-          </div>
+          <img 
+            src={logo} 
+            alt="算立方" 
+            style={{
+              height: '48px',
+              maxWidth: '150px',
+              // width: '240px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
 
         {/* 桌面端导航菜单 */}
@@ -225,26 +250,30 @@ const Header: React.FC = () => {
             </>
           )}
           
-          {/* 桌面端登录按钮 */}
+          {/* 桌面端用户信息或登录按钮 */}
           {!isMobile && (
-            <Button 
-              type="primary" 
-              icon={<RightOutlined />}
-              onClick={() => navigate('/user/login')}
-              style={{
-                background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
-                border: 'none',
-                borderRadius: '20px',
-                padding: '4px 12px',
-                height: '36px',
-                fontSize: '12px',
-                fontWeight: '500',
-                minWidth: '80px',
-                alignItems: 'center'
-              }}
-            >
-              登录/注册
-            </Button>
+            currentUser ? (
+              <AvatarDropdown />
+            ) : (
+              <Button 
+                type="primary" 
+                icon={<RightOutlined />}
+                onClick={() => navigate('/user/login')}
+                style={{
+                  background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '4px 12px',
+                  height: '36px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  minWidth: '80px',
+                  alignItems: 'center'
+                }}
+              >
+                登录/注册
+              </Button>
+            )
           )}
         </div>
       </div>
@@ -286,24 +315,57 @@ const Header: React.FC = () => {
             </div>
           ))}
           <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f0f0f0' }}>
-            <Button 
-              type="primary" 
-              block
-              icon={<RightOutlined />}
-              onClick={() => {
-                navigate('/user/login');
-                setDrawerVisible(false);
-              }}
-              style={{
-                background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
-                border: 'none',
-                height: '40px',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              登录/注册
-            </Button>
+            {currentUser ? (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                background: '#f5f5f5',
+                borderRadius: '8px'
+              }}>
+                {currentUser.userAvatar ? (
+                  <Avatar src={currentUser.userAvatar} size={32} />
+                ) : (
+                  <Avatar icon={<UserOutlined />} size={32} />
+                )}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#333' }}>
+                    {currentUser.userName || '用户'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#999' }}>
+                    {currentUser.userRole || 'USER'}
+                  </div>
+                </div>
+                <Button 
+                  type="link" 
+                  danger
+                  onClick={handleLogout}
+                  style={{ padding: 0 }}
+                >
+                  退出登录
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                type="primary" 
+                block
+                icon={<RightOutlined />}
+                onClick={() => {
+                  navigate('/user/login');
+                  setDrawerVisible(false);
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
+                  border: 'none',
+                  height: '40px',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
+                登录/注册
+              </Button>
+            )}
           </div>
         </div>
       </Drawer>
