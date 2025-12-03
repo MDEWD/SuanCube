@@ -1,4 +1,4 @@
-import { Typography, Spin, Card, Space, Grid } from 'antd';
+import { Typography, Spin, Space, Grid } from 'antd';
 import { TeamOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
 import { listPartnersUsingGet } from '@/services/backend/partnerController';
@@ -119,29 +119,21 @@ const Partner: React.FC = () => {
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: screens.md ? '0 40px' : '0 16px',
-          marginBottom: '40px'
+          padding: screens.md ? '40px 40px' : '40px 16px',
+          marginBottom: '20px'
         }}>
-          <Card 
-            title={
-              <Space>
-                <TeamOutlined style={{ color: '#1890ff' }} />
-                <span style={{ fontSize: '20px', fontWeight: 600 }}>合作伙伴</span>
-              </Space>
-            }
-            style={{ 
-              borderRadius: '12px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            }}
-            headStyle={{ 
-              borderBottom: '1px solid #f0f0f0',
-              padding: '16px 24px'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
-              <Spin size="large" />
-            </div>
-          </Card>
+          <div style={{ 
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <TeamOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+            <span style={{ fontSize: '24px', fontWeight: 600, color: '#262626' }}>合作伙伴</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
+            <Spin size="large" />
+          </div>
         </div>
       );
     }
@@ -150,26 +142,20 @@ const Partner: React.FC = () => {
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: screens.md ? '0 40px' : '0 16px',
-        marginBottom: '40px'
+        padding: screens.md ? '40px 40px' : '40px 16px',
+        marginBottom: '20px'
       }}>
         {/* 合作伙伴部分 */}
-        <Card 
-          title={
-            <Space>
-              <TeamOutlined style={{ color: '#1890ff' }} />
-              <span style={{ fontSize: '20px', fontWeight: 600 }}>合作伙伴</span>
-            </Space>
-          }
-          style={{ 
-            borderRadius: '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-          }}
-          headStyle={{ 
-            borderBottom: '1px solid #f0f0f0',
-            padding: '16px 24px'
-          }}
-        >
+        <div>
+          <div style={{ 
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <TeamOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+            <span style={{ fontSize: '24px', fontWeight: 600, color: '#262626' }}>合作伙伴</span>
+          </div>
           
           {/* 滑动容器 */}
           <div 
@@ -264,7 +250,7 @@ const Partner: React.FC = () => {
               }
             }
           `}</style>
-        </Card>
+        </div>
       </div>
     );
   };

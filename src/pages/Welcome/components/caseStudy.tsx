@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Typography, Tag, Space, Grid, Spin, message } from 'antd';
+import { Row, Col, Typography, Tag, Space, Grid, Spin, message } from 'antd';
 import {
   BankOutlined,
   RocketOutlined,
@@ -120,29 +120,28 @@ const CaseStudy: React.FC = () => {
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: screens.md ? '0 40px' : '0 16px',
-        marginBottom: '40px'
+        padding: screens.md ? '40px 40px' : '40px 16px',
+        marginBottom: '20px'
       }}>
-        <Card 
-          title={
-            <Space>
-              <FileTextOutlined style={{ color: '#1890ff' }} />
-              <span style={{ fontSize: '20px', fontWeight: 600 }}>案例分享</span>
-            </Space>
-          }
-          style={{ 
-            borderRadius: '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-          }}
-          headStyle={{ 
-            borderBottom: '1px solid #f0f0f0',
-            padding: '16px 24px'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
-            <Spin size="large" />
-          </div>
-        </Card>
+        <div style={{ 
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <FileTextOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+          <Title level={2} style={{ 
+            margin: 0,
+            fontSize: '24px',
+            fontWeight: 600,
+            color: '#262626'
+          }}>
+            案例分享
+          </Title>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
+          <Spin size="large" />
+        </div>
       </div>
     );
   }
@@ -151,26 +150,27 @@ const CaseStudy: React.FC = () => {
     <div style={{
       maxWidth: '1400px',
       margin: '0 auto',
-      padding: screens.md ? '0 40px' : '0 16px',
-      marginBottom: '40px'
+      padding: screens.md ? '40px 40px' : '40px 16px',
+      marginBottom: '20px'
     }}>
       {/* 案例分享部分 */}
-      <Card 
-        title={
-          <Space>
-            <FileTextOutlined style={{ color: '#1890ff' }} />
-            <span style={{ fontSize: '20px', fontWeight: 600 }}>案例分享</span>
-          </Space>
-        }
-        style={{ 
-          borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-        }}
-        headStyle={{ 
-          borderBottom: '1px solid #f0f0f0',
-          padding: '16px 24px'
-        }}
-      >
+      <div>
+        <div style={{ 
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <FileTextOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+          <Title level={2} style={{ 
+            margin: 0,
+            fontSize: '24px',
+            fontWeight: 600,
+            color: '#262626'
+          }}>
+            案例分享
+          </Title>
+        </div>
 
         <Row gutter={[24, 24]}>
           {caseStudies.length === 0 ? (
@@ -185,25 +185,21 @@ const CaseStudy: React.FC = () => {
                 const isHovered = hoveredCardId === caseItem.id;
                 return (
                   <Col xs={24} sm={24} md={8} key={caseItem.id}>
-                  <Card
-                    hoverable
+                  <div
                     style={{
                       minHeight: '400px',
                       height: 'auto',
                       borderRadius: '12px',
+                      background: '#ffffff',
                       boxShadow: isHovered ? '0 4px 16px rgba(0,0,0,0.12)' : '0 2px 8px rgba(0,0,0,0.06)',
                       border: '1px solid #f0f0f0',
                       transition: 'all 0.3s ease',
                       position: 'relative',
                       overflow: 'visible',
                       transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-                      zIndex: isHovered ? 10 : 1
-                    }}
-                    bodyStyle={{
+                      zIndex: isHovered ? 10 : 1,
                       padding: '24px',
-                      position: 'relative',
-                      zIndex: 1,
-                      minHeight: '350px'
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={() => {
                       setHoveredCardId(caseItem.id);
@@ -366,14 +362,14 @@ const CaseStudy: React.FC = () => {
                         </Space>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                   </Col>
                 );
               })}
             </>
           )}
         </Row>
-      </Card>
+      </div>
     </div>
   );
 };

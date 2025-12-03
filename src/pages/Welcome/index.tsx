@@ -4,7 +4,8 @@ import Partner from './components/partner';
 import ProductIntro from './components/productIntro';
 import NewsCarousel from './components/newsCarousel';
 import CaseStudy from './components/caseStudy';
-import { Card, Typography, Row, Col, Space, Grid } from 'antd';
+import Footer from './components/Footer';
+import { Typography, Row, Col, Space, Grid } from 'antd';
 
 const { useBreakpoint } = Grid;
 import { 
@@ -87,26 +88,26 @@ const Welcome: React.FC = () => {
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: isMobile ? '0 16px' : '0 40px'
+        padding: isMobile ? '40px 16px' : '50px 40px'
       }}>
         {/* 服务保障部分 */}
-        <Card 
-          title={
-            <Space>
-              <SafetyCertificateOutlined style={{ color: '#52c41a' }} />
-              <span style={{ fontSize: '20px', fontWeight: 600 }}>服务保障</span>
-            </Space>
-          }
-          style={{ 
-            borderRadius: '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            marginBottom: '40px'
-          }}
-          headStyle={{ 
-            borderBottom: '1px solid #f0f0f0',
-            padding: '16px 24px'
-          }}
-        >
+        <div style={{ marginBottom: '40px' }}>
+          <div style={{ 
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <SafetyCertificateOutlined style={{ fontSize: '24px', color: '#52c41a' }} />
+            <Title level={2} style={{ 
+              margin: 0,
+              fontSize: '24px',
+              fontWeight: 600,
+              color: '#262626'
+            }}>
+              服务保障
+            </Title>
+          </div>
           <Row gutter={[32, 32]}>
             {servicesData.map((service, index) => (
               <Col xs={24} sm={12} md={6} key={index}>
@@ -120,13 +121,15 @@ const Welcome: React.FC = () => {
                   <Title level={4} style={{ 
                     marginBottom: '8px',
                     fontSize: '18px',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    color: '#262626'
                   }}>
                     {service.title}
                   </Title>
-                  <Text type="secondary" style={{ 
+                  <Text style={{ 
                     fontSize: '14px',
-                    lineHeight: 1.5
+                    lineHeight: 1.5,
+                    color: '#595959'
                   }}>
                     {service.description}
                   </Text>
@@ -134,7 +137,7 @@ const Welcome: React.FC = () => {
               </Col>
             ))}
           </Row>
-        </Card>
+        </div>
       </div>
 
       {/* 案例分享部分 */}
@@ -142,6 +145,9 @@ const Welcome: React.FC = () => {
 
       {/* 合作伙伴部分 */}
       <Partner />
+
+      {/* 页脚部分 */}
+      <Footer />
     </div>
   );
 };
