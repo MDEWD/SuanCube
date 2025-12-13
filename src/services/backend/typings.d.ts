@@ -109,6 +109,7 @@ declare namespace API {
     userName?: string;
     userProfile?: string;
     userRole?: string;
+    userID?: string;
   };
 
   type OrderItem = {
@@ -321,6 +322,7 @@ declare namespace API {
   type UserVO = {
     createTime?: string;
     id?: string;
+    userID?: string;
     userAvatar?: string;
     userName?: string;
     userProfile?: string;

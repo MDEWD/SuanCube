@@ -62,6 +62,7 @@ export async function getInitialState(): Promise<InitialState> {
           userRole: userData.userRole || (userData as any).userRole,
           createTime: userData.createTime || (userData as any).createTime,
           userProfile: userData.userProfile || (userData as any).userProfile,
+          userID: (userData as any).userID || (userData as any).userID,
         };
         
         initialState.currentUser = mappedUser;

@@ -906,7 +906,7 @@ const Profile: React.FC = () => {
                 >
                   {isAdmin ? '👑 管理员' : isPartner ? '🤝 算力同盟' : '👤 普通用户'}
                 </Tag>
-                {currentUser.id && (
+                {currentUser.userID && (
                   <Text style={{ 
                     color: 'rgba(255,255,255,0.95)',
                     fontSize: '14px',
@@ -915,7 +915,7 @@ const Profile: React.FC = () => {
                     borderRadius: '12px',
                     backdropFilter: 'blur(10px)'
                   }}>
-                    ID: {currentUser.id}
+                    ID: {currentUser.userID}
                   </Text>
                 )}
               </Space>
