@@ -22,17 +22,18 @@ export async function listProductByPageUsingPost(
   });
 }
 
-/** 获取产品详情 GET /api/product/get */
+/** 获取产品详情 GET /api/product/{id} */
 export async function getProductByIdUsingGet(
   params: {
     id?: string;
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePostVO_>('/api/product/get', {
+  const { id, ...rest } = params;
+  return request<API.BaseResponseProductVO_>(`/product/${id}`, {
     method: 'GET',
     params: {
-      ...params,
+      ...rest,
     },
     ...(options || {}),
   });
@@ -45,9 +46,48 @@ export async function getHotProductsUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/product/hot', {
+  return request<API.BaseResponsePageResultProductVO_>('/product/hot', {
     method: 'GET',
     params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 发布商品 POST /api/product/publish */
+export async function publishProductUsingPost(
+  body: API.ProductPublishRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseString_>('/product/publish', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 获取产品列表 GET /api/product/list */
+export async function getProductListUsingGet(
+  params?: {
+    type?: string;
+    gpuType?: string;
+    region?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    size?: number;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponsePageResultProductVO_>('/product/list', {
+    method: 'GET',
+    params: {
+      page: 1,
+      size: 20,
       ...params,
     },
     ...(options || {}),

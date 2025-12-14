@@ -109,7 +109,7 @@ declare namespace API {
     userName?: string;
     userProfile?: string;
     userRole?: string;
-    userID?: string;
+    displayId?: string;
   };
 
   type OrderItem = {
@@ -250,6 +250,82 @@ declare namespace API {
     userId?: string;
   };
 
+  type ProductPublishRequest = {
+    name?: string;
+    model?: string;
+    gpuType?: string;
+    gpuCount?: number;
+    cpu?: string;
+    memory?: string;
+    systemDisk?: string;
+    dataDisk?: string;
+    bandwidth?: string;
+    maxCudaVersion?: string;
+    driverVersion?: string;
+    payMode?: string;
+    price?: number;
+    region?: string;
+    location?: string;
+    applicationScenes?: string[];
+    tags?: string[];
+    images?: string[];
+    isNewDataCenter?: boolean;
+    dataCenterDescription?: string;
+    dataCenterImages?: string[];
+  };
+
+  type ProductVO = {
+    id?: string;
+    name?: string;
+    model?: string;
+    gpuType?: string;
+    gpuCount?: number;
+    cpu?: string;
+    memory?: string;
+    systemDisk?: string;
+    dataDisk?: string;
+    bandwidth?: string;
+    maxCudaVersion?: string;
+    driverVersion?: string;
+    payMode?: string;
+    price?: number;
+    rating?: number;
+    gpuAvailable?: number;
+    gpuTotal?: number;
+    region?: string;
+    location?: string;
+    type?: string;
+    status?: string;
+    tags?: string[];
+    images?: string[];
+    applicationScenes?: string[];
+    dataCenterLocation?: string;
+    dataCenterImages?: string[];
+    isNewDataCenter?: boolean;
+    dataCenterDescription?: string;
+    viewCount?: number;
+    isHot?: boolean;
+    isNew?: boolean;
+    createTime?: string;
+  };
+
+  type BaseResponseProductVO_ = {
+    code?: number;
+    data?: ProductVO;
+    message?: string;
+  };
+
+  type BaseResponsePageResultProductVO_ = {
+    code?: number;
+    data?: {
+      records?: ProductVO[];
+      total?: number;
+      current?: number;
+      size?: number;
+    };
+    message?: string;
+  };
+
   type uploadFileUsingPOSTParams = {
     biz?: string;
   };
@@ -322,7 +398,7 @@ declare namespace API {
   type UserVO = {
     createTime?: string;
     id?: string;
-    userID?: string;
+    displayId?: string;
     userAvatar?: string;
     userName?: string;
     userProfile?: string;

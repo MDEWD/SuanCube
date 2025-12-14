@@ -79,7 +79,7 @@ interface Requirement {
   deadline: string;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   createTime: string;
-  userId?: string;
+  displayId?: string;
   userName?: string;
 }
 
@@ -103,10 +103,10 @@ const Profile: React.FC = () => {
   const currentUser = initialState?.currentUser;
   
   // 判断用户角色
-  const userRole = currentUser?.userRole || 'user';
-  const isAdmin = userRole === 'admin';
-  const isPartner = userRole === 'partner';
-  const isUser = userRole === 'user' || !userRole;
+  const userRole = currentUser?.userRole || 'USER';
+  const isAdmin = userRole === 'ADMIN';
+  const isPartner = userRole === 'PARTNER';
+  const isUser = userRole === 'USER' || !userRole;
 
   // 状态管理
   const [activeTab, setActiveTab] = useState<string>(
@@ -195,7 +195,7 @@ const Profile: React.FC = () => {
           paymentMethod: item.paymentMethod || '在线支付',
           contractCode: item.contractCode || item.contractNo || '-',
           projectStatus: item.projectStatus || item.status || 'pending',
-          userId: item.userId,
+          displayId: item.displayId,
           userName: item.userName || item.user?.userName
         }));
         setOrders(orderList.length > 0 ? orderList : getDefaultOrders());
@@ -254,7 +254,7 @@ const Profile: React.FC = () => {
           deadline: item.deadline || item.deadlineDate || '',
           status: item.status || 'pending',
           createTime: item.createTime || '',
-          userId: item.userId,
+          displayId: item.displayId,
           userName: item.userName || ''
         }));
         setRequirements(reqList.length > 0 ? reqList : getDefaultRequirements());
@@ -734,9 +734,9 @@ const Profile: React.FC = () => {
       width: 100,
       render: (role: string) => {
         const roleMap: Record<string, { color: string; text: string }> = {
-          user: { color: 'blue', text: '普通用户' },
-          partner: { color: 'green', text: '算力同盟' },
-          admin: { color: 'red', text: '管理员' }
+          USER: { color: 'blue', text: '普通用户' },
+          PARTNER: { color: 'green', text: '算力同盟' },
+          ADMIN: { color: 'red', text: '管理员' }
         };
         const config = roleMap[role] || { color: 'default', text: role };
         return <Tag color={config.color}>{config.text}</Tag>;
@@ -903,10 +903,11 @@ const Profile: React.FC = () => {
                     fontWeight: 500,
                     backdropFilter: 'blur(10px)'
                   }}
+                  onClick={() => console.log('currentUser', currentUser)}
                 >
                   {isAdmin ? '👑 管理员' : isPartner ? '🤝 算力同盟' : '👤 普通用户'}
                 </Tag>
-                {currentUser.userID && (
+                {currentUser.displayId && (
                   <Text style={{ 
                     color: 'rgba(255,255,255,0.95)',
                     fontSize: '14px',
@@ -915,7 +916,7 @@ const Profile: React.FC = () => {
                     borderRadius: '12px',
                     backdropFilter: 'blur(10px)'
                   }}>
-                    ID: {currentUser.userID}
+                    ID: {currentUser.displayId}
                   </Text>
                 )}
               </Space>

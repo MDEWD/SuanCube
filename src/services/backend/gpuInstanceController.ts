@@ -14,7 +14,7 @@ export async function listGpuInstanceByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/gpu-instance/list/page', {
+  return request<API.BaseResponsePagePostVO_>('/product/list', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -24,17 +24,18 @@ export async function listGpuInstanceByPageUsingPost(
   });
 }
 
-/** 获取GPU实例详情 GET /api/gpu-instance/get */
+/** 获取商品详情 GET /api/product/{id} */
 export async function getGpuInstanceByIdUsingGet(
   params: {
     id?: string;
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePostVO_>('/api/gpu-instance/get', {
+  const { id, ...rest } = params;
+  return request<API.BaseResponsePostVO_>(`/api/product/${id}`, {
     method: 'GET',
     params: {
-      ...params,
+      ...rest,
     },
     ...(options || {}),
   });

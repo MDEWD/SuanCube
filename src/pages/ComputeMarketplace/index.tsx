@@ -11,40 +11,32 @@ import {
   Divider, 
   Typography, 
   Space, 
-  Rate,
   Tabs,
   Badge,
   Statistic,
   Tooltip,
-  Modal,
-  Form,
   Input,
   Select,
-  Upload,
   message,
-  InputNumber,
   Grid,
   Drawer,
   Spin
 } from 'antd';
-import { listGpuInstanceByPageUsingPost } from '@/services/backend/gpuInstanceController';
+import PublishProductModal from './components/PublishProductModal';
+import { publishProductUsingPost, getProductListUsingGet } from '@/services/backend/productController';
 
 const { useBreakpoint } = Grid;
 import { 
   ShoppingCartOutlined, 
   HeartOutlined, 
-  StarFilled,
   ThunderboltFilled,
   CrownFilled,
   PlusOutlined,
-  UploadOutlined,
   EyeOutlined
 } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
-const { Option } = Select;
-const { TextArea } = Input;
 
 // 类型定义
 interface GPUInstance {
@@ -77,12 +69,12 @@ interface GPUInstance {
 }
 
 // 发布商品表单数据类型
-interface PublishFormData {
+export interface PublishFormData {
   gpuType: string;
   gpuModel: string;
   cpu: string;
   memory: string;
-  storage: string;
+  storage?: string;
   bandwidth: string;
   location: string;
   applicationScenes: string[];
@@ -90,6 +82,12 @@ interface PublishFormData {
   dataCenterDescription: string;
   price: number;
   images: any[];
+  payMode?: string;
+  // 以下是表单中已有的但接口定义中缺少的字段
+  gpuAvailable?: number;
+  systemDisk?: string;
+  dataDisk?: string;
+  highSpeedNetworkCard?: string;
 }
 
 // 默认GPU实例数据（当API失败时使用）
@@ -283,7 +281,6 @@ const ComputeMarketplace: React.FC = () => {
   const [filterDrawerVisible, setFilterDrawerVisible] = useState(false);
   const [gpuInstances, setGpuInstances] = useState<GPUInstance[]>(defaultGpuInstances);
   const [loading, setLoading] = useState(true);
-  const [form] = Form.useForm();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
 
@@ -295,11 +292,14 @@ const ComputeMarketplace: React.FC = () => {
     try {
       setLoading(true);
       const type = activeTab === 'official-recommend' ? 'official-recommend' : 'lease';
-      const res = await listGpuInstanceByPageUsingPost({
-        current: 1,
-        pageSize: 100,
-        type: type
-      } as any);
+      
+      // 使用新的产品列表API
+      const res = await getProductListUsingGet({
+        type: type,
+        page: 1,
+        size: 100
+      });
+      
       if (res?.data?.records && res.data.records.length > 0) {
         const instances = res.data.records.map((item: any) => ({
           id: item.id || item.name,
@@ -307,8 +307,8 @@ const ComputeMarketplace: React.FC = () => {
           model: item.model || item.gpuModel,
           availableUntil: item.availableUntil || item.availableDate || '2025-12-31',
           rating: item.rating || 4,
-          gpuAvailable: item.gpuAvailable || item.availableCount || 0,
-          gpuTotal: item.gpuTotal || item.totalCount || 0,
+          gpuAvailable: item.gpuCount || item.gpuAvailable || item.availableCount || 0,
+          gpuTotal: item.gpuCount || item.gpuTotal || item.totalCount || 0,
           cpu: item.cpu || '',
           memory: item.memory || '',
           systemDisk: item.systemDisk || item.systemStorage || '',
@@ -317,12 +317,12 @@ const ComputeMarketplace: React.FC = () => {
           price: item.price || 0,
           tags: item.tags ? (Array.isArray(item.tags) ? item.tags : item.tags.split(',')) : [],
           region: item.region || item.location || '',
-          gpuCountType: item.gpuCountType || `${item.gpuTotal || 0}卡`,
+          gpuCountType: item.gpuCountType || `${item.gpuCount || 0}卡`,
           bandwidth: item.bandwidth || '',
           driverVersion: item.driverVersion || '',
           applicationScenes: item.applicationScenes ? (Array.isArray(item.applicationScenes) ? item.applicationScenes : item.applicationScenes.split(',')) : [],
           dataCenterLocation: item.dataCenterLocation || item.location || '',
-          dataCenterImages: item.dataCenterImages ? (Array.isArray(item.dataCenterImages) ? item.dataCenterImages : item.dataCenterImages.split(',')) : [],
+          dataCenterImages: item.dataCenterImages || item.images || [],
           isNewDataCenter: item.isNewDataCenter || false,
           dataCenterDescription: item.dataCenterDescription || '',
           type: item.type || type,
@@ -398,26 +398,49 @@ const ComputeMarketplace: React.FC = () => {
   // 处理发布商品
   const handlePublish = async (values: PublishFormData) => {
     try {
-      console.log('发布商品数据:', values);
-      message.success('商品发布成功！');
-      setPublishModalVisible(false);
-      form.resetFields();
-    } catch (error) {
-      message.error('发布失败，请重试');
+      // 映射表单数据到API请求参数
+      const requestData: any = {
+        name: values.gpuModel, // 使用GPU型号作为商品名称
+        model: values.gpuModel,
+        gpuType: values.gpuType,
+        gpuCount: values.gpuAvailable || 1, // 默认1个GPU
+        cpu: values.cpu,
+        memory: values.memory,
+        systemDisk: values.systemDisk,
+        dataDisk: values.dataDisk,
+        bandwidth: values.bandwidth,
+        payMode: values.payMode,
+        price: values.price,
+        // 地区字段暂时使用location，后续可以根据实际需求调整
+        region: values.location,
+        location: values.location,
+        applicationScenes: values.applicationScenes || [],
+        // 图片处理：将Ant Design Upload组件的文件列表转换为图片URL数组
+        images: (values.images || []).map((file: any) => file.url || file.response?.data?.url || ''),
+        isNewDataCenter: values.isNewDataCenter,
+        dataCenterDescription: values.dataCenterDescription,
+        // 数据中心图片暂时使用相同的图片列表，后续可以根据实际需求调整
+        dataCenterImages: (values.images || []).map((file: any) => file.url || file.response?.data?.url || ''),
+        // 以下字段表单中没有，暂时使用默认值或空值
+        maxCudaVersion: '',
+        driverVersion: '',
+        tags: [],
+      };
+      
+      // 调用发布商品API
+      const response = await publishProductUsingPost(requestData);
+      console.log('发布商品响应：', response);
+      
+      if (response?.code === 0) {
+        message.success('商品发布成功！');
+        setPublishModalVisible(false);
+      } else {
+        message.error(`发布失败：${response?.message || '未知错误'}`);
+      }
+    } catch (error: any) {
+      console.error('发布商品失败:', error);
+      message.error(`发布失败：${error?.message || '网络请求错误'}`);
     }
-  };
-
-  // 上传图片前的验证
-  const beforeUpload = (file: File) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('只能上传 JPG/PNG 格式的图片!');
-    }
-    const isLt5M = file.size / 1024 / 1024 < 5;
-    if (!isLt5M) {
-      message.error('图片必须小于 5MB!');
-    }
-    return isJpgOrPng && isLt5M;
   };
 
   // 自定义标签样式
@@ -838,192 +861,12 @@ const ComputeMarketplace: React.FC = () => {
         </Col>
       </Row>
 
-      {/* 发布商品模态框 */}
-      <Modal
-        title="发布商品"
-        open={publishModalVisible}
+      {/* 发布商品模态框 - 使用抽取的组件 */}
+      <PublishProductModal
+        visible={publishModalVisible}
         onCancel={() => setPublishModalVisible(false)}
-        footer={null}
-        width={800}
-        centered
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handlePublish}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="GPU类型"
-                name="gpuType"
-                rules={[{ required: true, message: '请选择GPU类型' }]}
-              >
-                <Select placeholder="选择GPU类型">
-                  {gpuTypes.map(type => (
-                    <Option key={type} value={type}>{type}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="GPU型号"
-                name="gpuModel"
-                rules={[{ required: true, message: '请输入GPU型号' }]}
-              >
-                <Input placeholder="例如：RTX3060-12G" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Title level={5}>配置详情</Title>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="CPU"
-                name="cpu"
-                rules={[{ required: true, message: '请输入CPU信息' }]}
-              >
-                <Input placeholder="例如：Intel Xeon E5-2673 v4" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="库存"
-                name="gpuAvailable"
-                rules={[{ required: true, message: '请输入库存信息' }]}
-              >
-                <Input placeholder="例如：12" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="内存"
-                name="memory"
-                rules={[{ required: true, message: '请输入内存信息' }]}
-              >
-                <Input placeholder="例如：64GB DDR4" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="集群存储"
-                name="dataDisk"
-                rules={[{ required: true, message: '请输入存储信息' }]}
-              >
-                <Input placeholder="例如：系统盘 20G + 数据盘 50GB NVME" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="公网带宽"
-                name="bandwidth"
-                rules={[{ required: true, message: '请输入带宽信息' }]}
-              >
-                <Input placeholder="例如：800 Mbps" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="机房位置"
-                name="location"
-                rules={[{ required: true, message: '请输入机房位置' }]}
-              >
-                <Input placeholder="例如：上海" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="系统盘"
-                name="systemDisk"
-                rules={[{ required: true, message: '请输入系统盘信息' }]}
-              >
-                <Input placeholder="例如：20G" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="高速网卡"
-                name="highSpeedNetworkCard"
-                rules={[{ required: true, message: '请输入高速网卡信息' }]}
-              >
-                <Input placeholder="例如：可配" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label="机房环境图片"
-            name="images"
-          >
-            <Upload
-              listType="picture-card"
-              beforeUpload={beforeUpload}
-              multiple
-            >
-              <div>
-                <UploadOutlined />
-                <div style={{ marginTop: 8 }}>上传图片</div>
-              </div>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item
-            label="推荐应用场景"
-            name="applicationScenes"
-            rules={[{ required: true, message: '请选择应用场景' }]}
-          >
-            <Checkbox.Group options={applicationScenesOptions} />
-          </Form.Item>
-
-          <Form.Item
-            name="isNewDataCenter"
-            valuePropName="checked"
-          >
-            <Checkbox>新机房</Checkbox>
-          </Form.Item>
-
-          <Form.Item
-            label="机房自荐评语"
-            name="dataCenterDescription"
-            rules={[
-              { required: true, message: '请输入机房评语' },
-              { max: 50, message: '评语不能超过50个字' }
-            ]}
-          >
-            <TextArea 
-              placeholder="请输入机房自荐评语（最多50字）" 
-              rows={3}
-              showCount
-              maxLength={50}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="目标价格（元/月）"
-            name="price"
-            rules={[{ required: true, message: '请输入目标价格' }]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              min={0}
-              step={0.01}
-              placeholder="请输入价格"
-              formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            />
-          </Form.Item>
-
-          <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
-            <Button onClick={() => setPublishModalVisible(false)} style={{ marginRight: 8 }}>
-              取消
-            </Button>
-            <Button type="primary" htmlType="submit">
-              发布商品
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={handlePublish}
+      />
 
       {/* 移动端筛选抽屉 */}
       <Drawer

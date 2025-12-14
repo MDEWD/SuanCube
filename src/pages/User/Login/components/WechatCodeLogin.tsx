@@ -297,7 +297,7 @@ const WechatCodeLogin: React.FC<WechatCodeLoginProps> = ({ onLoginSuccess }) => 
         userAvatar: responseData.user.avatar || responseData.user.userAvatar,
         userRole: responseData.user.userRole,
         createTime: responseData.user.createTime,
-        userID: responseData.user.userID,
+        displayId: responseData.user.displayId,
       };
       
       console.log('✅ 映射后的用户信息:', mappedUser);

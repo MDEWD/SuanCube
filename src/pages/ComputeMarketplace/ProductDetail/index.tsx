@@ -43,7 +43,7 @@ dayjs.extend(localizedFormat);
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-import { getGpuInstanceByIdUsingGet } from '@/services/backend/gpuInstanceController';
+import { getProductByIdUsingGet } from '@/services/backend/productController';
 
 // 类型定义
 interface GPUInstance {
@@ -128,35 +128,35 @@ const ProductDetail: React.FC = () => {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await getGpuInstanceByIdUsingGet({ id });
+      const res = await getProductByIdUsingGet({ id });
       if (res?.data) {
         const item = res.data;
         setProduct({
           id: item.id || id,
-          name: item.name || item.gpuType || '',
-          model: item.model || item.gpuModel || '',
-          availableUntil: item.availableUntil || item.availableDate || '2025-12-31',
-          rating: item.rating || 4,
-          gpuAvailable: item.gpuAvailable || item.availableCount || 0,
-          gpuTotal: item.gpuTotal || item.totalCount || 0,
+          name: item.name || '',
+          model: item.model || '',
+          availableUntil: '2025-12-31', // API未返回该字段，使用默认值
+          rating: item.rating > 0 ? item.rating : 4, // 只有当rating大于0时使用，否则使用默认值
+          gpuAvailable: item.gpuCount || 0, // 使用gpuCount作为可用数量
+          gpuTotal: item.gpuCount || 0, // 使用gpuCount作为总数
           cpu: item.cpu || '',
           memory: item.memory || '',
-          systemDisk: item.systemDisk || item.systemStorage || '',
-          dataDisk: item.dataDisk || item.dataStorage || '',
-          maxCudaVersion: item.maxCudaVersion || item.cudaVersion || '',
+          systemDisk: item.systemDisk || '',
+          dataDisk: item.dataDisk || '',
+          maxCudaVersion: item.maxCudaVersion || '',
           price: item.price || 0,
-          tags: item.tags ? (Array.isArray(item.tags) ? item.tags : item.tags.split(',')) : [],
-          region: item.region || item.location || '',
-          gpuCountType: item.gpuCountType || `${item.gpuTotal || 0}卡`,
+          tags: item.tags || [],
+          region: item.region || '',
+          gpuCountType: `${item.gpuCount || 0}卡`, // 直接使用gpuCount生成
           bandwidth: item.bandwidth || '',
           driverVersion: item.driverVersion || '',
-          applicationScenes: item.applicationScenes ? (Array.isArray(item.applicationScenes) ? item.applicationScenes : item.applicationScenes.split(',')) : [],
-          dataCenterLocation: item.dataCenterLocation || item.location || '',
-          dataCenterImages: item.dataCenterImages ? (Array.isArray(item.dataCenterImages) ? item.dataCenterImages : item.dataCenterImages.split(',')) : [],
-          isNewDataCenter: item.isNewDataCenter || false,
+          applicationScenes: item.applicationScenes || [],
+          dataCenterLocation: item.location || '', // 使用location作为机房位置
+          dataCenterImages: item.images || [], // 使用images作为机房图片
+          isNewDataCenter: Boolean(item.isNewDataCenter), // 转换为布尔值
           dataCenterDescription: item.dataCenterDescription || '',
-          isHot: item.isHot || false,
-          isNew: item.isNew || false
+          isHot: Boolean(item.isHot), // 转换为布尔值
+          isNew: Boolean(item.isNew) // 转换为布尔值
         });
       }
     } catch (error) {
