@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** check GET /api/ */
 export async function checkUsingGet(
@@ -8,8 +8,7 @@ export async function checkUsingGet(
   params: API.checkUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<string>('/api/', {
-    method: 'GET',
+  return axiosInstance.get<string>('/api/', {
     params: {
       ...params,
     },
@@ -19,16 +18,14 @@ export async function checkUsingGet(
 
 /** receiveMessage POST /api/ */
 export async function receiveMessageUsingPost(options?: { [key: string]: any }) {
-  return request<any>('/api/', {
-    method: 'POST',
+  return axiosInstance.post<any>('/api/', {}, {
     ...(options || {}),
   });
 }
 
 /** setMenu GET /api/setMenu */
 export async function setMenuUsingGet(options?: { [key: string]: any }) {
-  return request<string>('/api/setMenu', {
-    method: 'GET',
+  return axiosInstance.get<string>('/api/setMenu', {
     ...(options || {}),
   });
 }

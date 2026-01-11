@@ -1,15 +1,10 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** addPost POST /api/post/add */
 export async function addPostUsingPost(body: API.PostAddRequest, options?: { [key: string]: any }) {
-  return request<API.BaseResponseLong_>('/api/post/add', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseLong_>('/api/post/add', body, {
     ...(options || {}),
   });
 }
@@ -19,12 +14,7 @@ export async function deletePostUsingPost(
   body: API.DeleteRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/post/delete', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/post/delete', body, {
     ...(options || {}),
   });
 }
@@ -34,12 +24,7 @@ export async function editPostUsingPost(
   body: API.PostEditRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/post/edit', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/post/edit', body, {
     ...(options || {}),
   });
 }
@@ -50,8 +35,7 @@ export async function getPostVoByIdUsingGet(
   params: API.getPostVOByIdUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePostVO_>('/api/post/get/vo', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePostVO_>('/api/post/get/vo', {
     params: {
       ...params,
     },
@@ -64,12 +48,7 @@ export async function listPostByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePost_>('/api/post/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePost_>('/api/post/list/page', body, {
     ...(options || {}),
   });
 }
@@ -79,12 +58,7 @@ export async function listPostVoByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post/list/page/vo', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/post/list/page/vo', body, {
     ...(options || {}),
   });
 }
@@ -94,12 +68,7 @@ export async function listMyPostVoByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post/my/list/page/vo', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/post/my/list/page/vo', body, {
     ...(options || {}),
   });
 }
@@ -109,12 +78,7 @@ export async function searchPostVoByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post/search/page/vo', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/post/search/page/vo', body, {
     ...(options || {}),
   });
 }
@@ -124,12 +88,7 @@ export async function updatePostUsingPost(
   body: API.PostUpdateRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/post/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/post/update', body, {
     ...(options || {}),
   });
 }

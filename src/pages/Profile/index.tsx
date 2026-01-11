@@ -1,5 +1,6 @@
+'use client';
 import React, { useState, useEffect } from 'react';
-import { useModel, history } from '@umijs/max';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   Tabs,
@@ -99,8 +100,12 @@ interface Product {
 }
 
 const Profile: React.FC = () => {
-  const { initialState } = useModel('@@initialState');
-  const currentUser = initialState?.currentUser;
+  const router = useRouter();
+  // Get currentUser from localStorage instead of useModel
+  const [currentUser, setCurrentUser] = useState<API.LoginUserVO | undefined>(() => {
+    const userStr = localStorage.getItem('currentUser');
+    return userStr ? JSON.parse(userStr) : undefined;
+  });
   
   // 判断用户角色
   const userRole = currentUser?.userRole || 'USER';
@@ -132,7 +137,7 @@ const Profile: React.FC = () => {
         content: '请先登录',
         duration: 3
       });
-      history.push('/user/login?redirect=/profile');
+      router.push('/login?redirect=/profile');
       return;
     }
     loadData();
@@ -185,8 +190,9 @@ const Profile: React.FC = () => {
         userId: isAdmin ? undefined : currentUser?.id,
         type: isAdmin ? undefined : type
       });
-      if (res?.data?.records) {
-        const orderList = res.data.records.map((item: any) => ({
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        const orderList = res.data.data.records.map((item: any) => ({
           id: item.id,
           productName: item.productName || item.product?.name || '未知产品',
           orderDate: item.orderDate || item.createTime || '',
@@ -216,8 +222,9 @@ const Profile: React.FC = () => {
         pageSize: 100,
         userId: currentUser?.id
       });
-      if (res?.data?.records) {
-        const favList = res.data.records.map((item: any) => ({
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        const favList = res.data.data.records.map((item: any) => ({
           id: item.id,
           productId: item.productId,
           productName: item.productName || item.product?.name || '未知产品',
@@ -243,8 +250,9 @@ const Profile: React.FC = () => {
         pageSize: 100,
         userId: currentUser?.id
       });
-      if (res?.data?.records) {
-        const reqList = res.data.records.map((item: any) => ({
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        const reqList = res.data.data.records.map((item: any) => ({
           id: item.id,
           title: item.title || item.name,
           description: item.description || item.content || '',
@@ -275,8 +283,9 @@ const Profile: React.FC = () => {
         pageSize: 100,
         userId: currentUser?.id
       });
-      if (res?.data?.records) {
-        const prodList = res.data.records.map((item: any) => ({
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        const prodList = res.data.data.records.map((item: any) => ({
           id: item.id,
           name: item.name || item.title,
           model: item.model || '',
@@ -307,8 +316,9 @@ const Profile: React.FC = () => {
         pageSize: 100,
         userRole: 'user'
       });
-      if (res?.data?.records) {
-        setAllUsers(res.data.records);
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        setAllUsers(res.data.data.records);
       }
     } catch (error) {
       console.error('加载用户失败:', error);
@@ -323,8 +333,9 @@ const Profile: React.FC = () => {
         pageSize: 100,
         userRole: 'partner'
       });
-      if (res?.data?.records) {
-        setAllPartners(res.data.records);
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records) {
+        setAllPartners(res.data.data.records);
       }
     } catch (error) {
       console.error('加载合作伙伴失败:', error);
@@ -538,7 +549,7 @@ const Profile: React.FC = () => {
               fontWeight: 500,
               padding: '0 8px'
             }}
-            onClick={() => history.push(`/market/product/${record.productId}`)}
+            onClick={() => router.push(`/market/product/${record.productId}`)}
           >
             查看详情
           </Button>

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { 
   Row, Col,Button, Input, Divider, Select, 

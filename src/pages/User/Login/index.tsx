@@ -1,13 +1,13 @@
-"use client";
+'use client';
 import { Card, Typography, Space, message } from "antd";
 import { WechatOutlined } from '@ant-design/icons';
-import { useModel, history } from '@umijs/max';
+import { useRouter } from 'next/navigation';
 import WechatCodeLogin from './components/WechatCodeLogin';
 
 const { Title, Text } = Typography;
 
 const Login: React.FC = () => {
-  const { setInitialState } = useModel('@@initialState');
+  const router = useRouter();
 
   // 处理登录成功
   const handleLoginSuccess = (user: API.LoginUserVO) => {
@@ -20,27 +20,24 @@ const Login: React.FC = () => {
     }
     
     try {
-      // 保存用户信息到全局状态
-      console.log('📝 正在设置用户状态...');
-      setInitialState({
-        currentUser: user,
-      });
-      console.log('✅ 用户状态已设置:', user);
+      // 保存用户信息到 localStorage
+      console.log('📝 正在保存用户信息到 localStorage...');
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      console.log('✅ 用户信息已保存:', user);
       
       // 获取跳转地址
       const urlParams = new URL(window.location.href).searchParams;
       const redirect = urlParams.get('redirect') || '/';
       console.log('🚀 准备跳转到:', redirect);
       
-      // 使用 history.push 跳转
-      // 注意：如果 history.push 不生效，可能是路由配置问题
-      history.push(redirect);
-      console.log('✅ history.push 已调用');
+      // 使用 Next.js router 跳转
+      router.push(redirect);
+      console.log('✅ router.push 已调用');
       
       // 如果 500ms 后还在登录页，使用 window.location 强制跳转
       setTimeout(() => {
         if (window.location.pathname === '/user/login') {
-          console.warn('⚠️ history.push 未生效，使用 window.location 强制跳转');
+          console.warn('⚠️ router.push 未生效，使用 window.location 强制跳转');
           window.location.href = redirect;
         } else {
           console.log('✅ 跳转成功，当前路径:', window.location.pathname);

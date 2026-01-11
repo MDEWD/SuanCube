@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取需求列表 POST /api/requirement/list/page */
 export async function listRequirementByPageUsingPost(
@@ -12,12 +12,7 @@ export async function listRequirementByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/requirement/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/requirement/list/page', body, {
     ...(options || {}),
   });
 }
@@ -35,12 +30,7 @@ export async function addRequirementUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseLong_>('/api/requirement/add', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseLong_>('/api/requirement/add', body, {
     ...(options || {}),
   });
 }

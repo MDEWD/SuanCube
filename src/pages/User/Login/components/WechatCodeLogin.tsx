@@ -50,27 +50,31 @@ const WechatCodeLogin: React.FC<WechatCodeLoginProps> = ({ onLoginSuccess }) => 
       const res = await getQrCodeUsingGet();
       console.log('二维码接口响应:', res);
       // 兼容不同的响应格式
-      if (res && (res.code === 0 || res.code === undefined)) {
-        // 优先使用 res.data，如果没有则使用 res 本身
-        const responseData = res.data || (res as any);
-        if (responseData && (responseData.qrCodeUrl || responseData.ticket)) {
-          setQrCodeUrl(responseData.qrCodeUrl || '');
-          setTicket(responseData.ticket || '');
+      // 对于axios响应，实际数据在res.data中
+      const responseData = res?.data;
+      const isSuccess = responseData && (responseData.code === 0 || responseData.code === undefined);
+      
+      if (res && (isSuccess || !res.data)) {
+        // 如果有res.data，使用它，否则使用res本身
+        const actualData = res.data || (res as any);
+        if (actualData && (actualData.qrCodeUrl || actualData.ticket)) {
+          setQrCodeUrl(actualData.qrCodeUrl || '');
+          setTicket(actualData.ticket || '');
           setScanned(false);
           setOpenId(''); // 重置 openId
           setNickname(''); // 重置 nickname
           setAvatar(''); // 重置 avatar
           form.setFieldsValue({ code: '' }); // 清空验证码输入
           // 开始轮询
-          if (responseData.ticket) {
-            startPolling(responseData.ticket);
+          if (actualData.ticket) {
+            startPolling(actualData.ticket);
           }
-          console.log('二维码接口响应:', responseData.qrCodeUrl);
+          console.log('二维码接口响应:', actualData.qrCodeUrl);
         } else {
           message.error('获取二维码失败：响应数据格式错误');
         }
       } else {
-        message.error(res?.message || '获取二维码失败，请重试');
+        message.error(responseData?.message || '获取二维码失败，请重试');
       }
     } catch (error: any) {
       console.error('获取二维码错误:', error);

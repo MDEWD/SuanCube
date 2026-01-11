@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Carousel, Button, Typography, Spin, message } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { 

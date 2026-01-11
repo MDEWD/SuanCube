@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取合作伙伴列表 GET /api/partner/list */
 export async function listPartnersUsingGet(
@@ -10,8 +10,7 @@ export async function listPartnersUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/partner/list', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePagePartnerVO_>('/api/partner/list', {
     params: {
       ...params,
     },

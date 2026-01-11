@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Layout, Menu, Card, Row, Col, Typography, Tag, Button, Input, Divider, Avatar, Rate, Select } from 'antd';
 import { 

@@ -1,15 +1,13 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** addUser POST /api/user/add */
 export async function addUserUsingPost(body: API.UserAddRequest, options?: { [key: string]: any }) {
-  return request<API.BaseResponseLong_>('/api/user/add', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseLong_>('/api/user/add', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -19,12 +17,10 @@ export async function deleteUserUsingPost(
   body: API.DeleteRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/user/delete', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/user/delete', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -35,8 +31,7 @@ export async function getUserByIdUsingGet(
   params: API.getUserByIdUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseUser_>('/api/user/get', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponseUser_>('/api/user/get', {
     params: {
       ...params,
     },
@@ -46,8 +41,7 @@ export async function getUserByIdUsingGet(
 
 /** getLoginUser GET /api/user/get/login */
 export async function getLoginUserUsingGet(options?: { [key: string]: any }) {
-  return request<API.BaseResponseLoginUserVO_>('/user/get/login', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponseLoginUserVO_>('/api/user/get/login', {
     ...(options || {}),
   });
 }
@@ -58,8 +52,7 @@ export async function getUserVoByIdUsingGet(
   params: API.getUserVOByIdUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseUserVO_>('/api/user/get/vo', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponseUserVO_>('/api/user/get/vo', {
     params: {
       ...params,
     },
@@ -72,12 +65,10 @@ export async function listUserByPageUsingPost(
   body: API.UserQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePageUser_>('/api/user/list/page', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponsePageUser_>('/api/user/list/page', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -87,12 +78,10 @@ export async function listUserVoByPageUsingPost(
   body: API.UserQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePageUserVO_>('/api/user/list/page/vo', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponsePageUserVO_>('/api/user/list/page/vo', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -102,12 +91,10 @@ export async function userLoginUsingPost(
   body: API.UserLoginRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseLoginUserVO_>('/user/login', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseLoginUserVO_>('/api/user/login', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -118,8 +105,7 @@ export async function userLoginByWxOpenUsingGet(
   params: API.userLoginByWxOpenUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseLoginUserVO_>('/api/user/login/wx_open', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponseLoginUserVO_>('/api/user/login/wx_open', {
     params: {
       ...params,
     },
@@ -129,8 +115,7 @@ export async function userLoginByWxOpenUsingGet(
 
 /** userLogout POST /api/user/logout */
 export async function userLogoutUsingPost(options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean_>('user/logout', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/user/logout', {}, {
     ...(options || {}),
   });
 }
@@ -140,12 +125,10 @@ export async function userRegisterUsingPost(
   body: API.UserRegisterRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseLong_>('/api/user/register', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseLong_>('/api/user/register', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -155,12 +138,10 @@ export async function updateUserUsingPost(
   body: API.UserUpdateRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/user/update', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/user/update', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -170,19 +151,17 @@ export async function updateMyUserUsingPost(
   body: API.UserUpdateMyRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/user/update/my', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/user/update/my', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
 
 /** 获取登录二维码 GET /api/user/qr-code */
 export async function getQrCodeUsingGet(options?: { [key: string]: any }) {
-  return request<{
+  return axiosInstance.get<{
     code?: number;
     message?: string;
     data?: {
@@ -190,9 +169,7 @@ export async function getQrCodeUsingGet(options?: { [key: string]: any }) {
       qrCodeUrl?: string;
       expireSeconds?: number;
     };
-  }>('/user/qr-code', {
-    method: 'GET',
-    skipErrorHandler: true, // 跳过全局错误处理，手动处理响应
+  }>('/api/user/qr-code', {
     ...(options || {}),
   });
 }
@@ -204,19 +181,17 @@ export async function checkTicketUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<{
+  return axiosInstance.get<{
     code?: number;
     message?: string;
     data?: {
       scanned?: string;
       openId?: string;
     };
-  }>('/user/check-ticket', {
-    method: 'GET',
+  }>('/api/user/check-ticket', {
     params: {
       ...params,
     },
-    skipErrorHandler: true, // 轮询接口跳过全局错误处理
     ...(options || {}),
   });
 }
@@ -231,19 +206,17 @@ export async function userLoginByCodeUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<{
+  return axiosInstance.post<{
     code?: number;
     message?: string;
     data?: {
       token?: string;
       user?: API.LoginUserVO;
     };
-  }>('/user/login', {
-    method: 'POST',
+  }>('/api/user/login', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }

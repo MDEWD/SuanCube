@@ -1,3 +1,5 @@
+'use client';
+
 import { Space, Typography, Button, Grid } from 'antd';
 import React from 'react';
 import { RocketOutlined } from '@ant-design/icons';

@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** uploadFile POST /api/file/upload */
 export async function uploadFileUsingPost(
@@ -32,13 +32,13 @@ export async function uploadFileUsingPost(
     }
   });
 
-  return request<API.BaseResponseString_>('/api/file/upload', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseString_>('/api/file/upload', formData, {
     params: {
       ...params,
     },
-    data: formData,
-    requestType: 'form',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
     ...(options || {}),
   });
 }

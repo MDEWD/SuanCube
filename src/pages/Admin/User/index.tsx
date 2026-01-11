@@ -1,10 +1,10 @@
+'use client';
 import CreateModal from '@/pages/Admin/User/components/CreateModal';
 import UpdateModal from '@/pages/Admin/User/components/UpdateModal';
 import { deleteUserUsingPost, listUserByPageUsingPost } from '@/services/backend/userController';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import '@umijs/max';
 import { Button, message, Space, Typography } from 'antd';
 import React, { useRef, useState } from 'react';
 
@@ -152,12 +152,14 @@ const UserAdminPage: React.FC = () => {
           const sortField = Object.keys(sort)?.[0];
           const sortOrder = sort?.[sortField] ?? undefined;
 
-          const { data, code } = await listUserByPageUsingPost({
+          const response = await listUserByPageUsingPost({
             ...params,
             sortField,
             sortOrder,
             ...filter,
           } as API.UserQueryRequest);
+
+          const { data, code } = response.data;
 
           return {
             success: code === 0,

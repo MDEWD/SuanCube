@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取收藏列表 POST /api/favourite/list/page */
 export async function listFavouriteByPageUsingPost(
@@ -12,12 +12,7 @@ export async function listFavouriteByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/favourite/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/favourite/list/page', body, {
     ...(options || {}),
   });
 }
@@ -30,12 +25,7 @@ export async function addFavouriteUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseLong_>('/api/favourite/add', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseLong_>('/api/favourite/add', body, {
     ...(options || {}),
   });
 }
@@ -48,12 +38,7 @@ export async function removeFavouriteUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/favourite/remove', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseBoolean_>('/api/favourite/remove', body, {
     ...(options || {}),
   });
 }

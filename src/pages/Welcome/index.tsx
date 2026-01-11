@@ -1,4 +1,5 @@
-import { useModel } from '@umijs/max';
+'use client';
+
 import React from 'react';
 import Partner from './components/partner';
 import ProductIntro from './components/productIntro';

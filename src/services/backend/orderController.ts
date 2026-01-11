@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取订单列表 POST /api/order/list/page */
 export async function listOrderByPageUsingPost(
@@ -13,12 +13,7 @@ export async function listOrderByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/order/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/order/list/page', body, {
     ...(options || {}),
   });
 }
@@ -30,8 +25,7 @@ export async function getOrderByIdUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePostVO_>('/api/order/get', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePostVO_>('/api/order/get', {
     params: {
       ...params,
     },

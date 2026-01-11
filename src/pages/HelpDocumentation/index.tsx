@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Layout, Card, Typography, List, Divider, Button, Space, Tag, Row, Col, Alert, Breadcrumb } from 'antd';
 import { 

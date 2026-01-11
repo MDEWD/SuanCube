@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link, history } from 'umi';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Card, 
   Row, 
@@ -15,8 +18,6 @@ import {
   Badge,
   Statistic,
   Tooltip,
-  Input,
-  Select,
   message,
   Grid,
   Drawer,
@@ -91,7 +92,7 @@ export interface PublishFormData {
 }
 
 // 默认GPU实例数据（当API失败时使用）
-const defaultGpuInstances: GPUInstance[] = [
+export const defaultGpuInstances: GPUInstance[] = [
   // 租赁专区商品
   {
     id: '1',
@@ -273,6 +274,7 @@ const defaultGpuInstances: GPUInstance[] = [
 ];
 
 const ComputeMarketplace: React.FC = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('lease');
   const [selectedGPUType, setSelectedGPUType] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
@@ -300,8 +302,8 @@ const ComputeMarketplace: React.FC = () => {
         size: 100
       });
       
-      if (res?.data?.records && res.data.records.length > 0) {
-        const instances = res.data.records.map((item: any) => ({
+      if (res?.data?.data?.records && res.data.data.records.length > 0) {
+        const instances = res.data.data.records.map((item: any) => ({
           id: item.id || item.name,
           name: item.name || item.gpuType,
           model: item.model || item.gpuModel,
@@ -429,13 +431,14 @@ const ComputeMarketplace: React.FC = () => {
       
       // 调用发布商品API
       const response = await publishProductUsingPost(requestData);
-      console.log('发布商品响应：', response);
+      console.log('发布商品响应：', response);      
       
-      if (response?.code === 0) {
+      // API response structure: response = { data: { code: 0, message: "" } }
+      if (response?.data?.code === 0) {
         message.success('商品发布成功！');
         setPublishModalVisible(false);
       } else {
-        message.error(`发布失败：${response?.message || '未知错误'}`);
+        message.error(`商品发布失败：${response?.data?.message || '未知错误'}`);
       }
     } catch (error: any) {
       console.error('发布商品失败:', error);
@@ -619,7 +622,7 @@ const ComputeMarketplace: React.FC = () => {
                   bodyStyle={{ padding: isMobile ? '12px' : '16px' }}
                   hoverable
                   className="gpu-instance-card"
-                  onClick={() => history.push(`/market/product/${instance.id}`)}
+                  onClick={() => router.push(`/market/product/${instance.id}`)}
                 >
                   {/* 热卖/新标签 */}
                   {instance.isHot && (
@@ -793,7 +796,7 @@ const ComputeMarketplace: React.FC = () => {
                     
                     {/* 查看详情按钮 */}
                     <Tooltip title="查看详情">
-                      <Link to={`/market/product/${instance.id}`}>
+                      <Link href={`/market/product/${instance.id}`}>
                         <Button 
                           type="default"
                           icon={<EyeOutlined />}

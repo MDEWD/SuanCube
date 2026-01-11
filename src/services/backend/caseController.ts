@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取案例列表 GET /api/case/list */
 export async function listCasesUsingGet(
@@ -11,8 +11,7 @@ export async function listCasesUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/case/list', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePagePostVO_>('/api/case/list', {
     params: {
       ...params,
     },
@@ -27,8 +26,7 @@ export async function getCaseByIdUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePostVO_>('/api/case/get', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePostVO_>('/api/case/get', {
     params: {
       ...params,
     },

@@ -1,15 +1,16 @@
+'use client';
 import React from 'react';
-import { 
-  UserAddOutlined, 
-  PaperClipOutlined, 
-  CheckCircleOutlined, 
+import {
+  UserAddOutlined,
+  PaperClipOutlined,
+  CheckCircleOutlined,
   UserOutlined,
   CodeOutlined,
   ShoppingOutlined,
   CalendarOutlined
 } from '@ant-design/icons';
 import { Button, Card, Row, Col, Typography, Divider } from 'antd';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import './index.css'; // 假设存在此CSS文件用于额外样式
 // import Header from '../Header';
 
@@ -79,7 +80,7 @@ const PartnerPage: React.FC = () => {
             引导用户在智享云官网购买智享云产品和服务的合作伙伴
           </Paragraph>
           <div className="banner-actions">
-            <Link to="/partner/apply">
+            <Link href="/partner/apply">
               <Button 
                 type="primary" 
                 size="large" 
@@ -88,7 +89,7 @@ const PartnerPage: React.FC = () => {
                 立即加入
               </Button>
             </Link>
-            <Link to="/partner/consult">
+            <Link href="/partner/consult">
               <Button 
                 size="large" 
                 className="secondary-button"
@@ -144,7 +145,7 @@ const PartnerPage: React.FC = () => {
         </Row>
         
         <div className="benefits-cta">
-          <Link to="/partner/apply">
+          <Link href="/partner/apply">
             <Button 
               type="primary" 
               size="large" 

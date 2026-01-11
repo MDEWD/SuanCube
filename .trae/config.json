@@ -1,0 +1,177 @@
+{
+  "codeAnalysis": {
+    "include": [
+      "app/**/*.{ts,tsx,js,jsx}",
+      "src/**/*.{ts,tsx,js,jsx}",
+      "config/**/*.{ts,js}",
+      "next.config.js",
+      "package.json",
+      "tsconfig.json"
+    ],
+    "exclude": [
+      "node_modules/**",
+      ".next/**",
+      "dist/**",
+      "build/**",
+      "out/**",
+      "public/**",
+      "**/*.min.js",
+      "**/*.map",
+      ".git/**",
+      "**/*.tmp",
+      "**/*.log",
+      "**/*.swp",
+      "**/*.swo",
+      "**/.DS_Store"
+    ]
+  },
+  "codeGeneration": {
+    "language": "typescript",
+    "framework": "nextjs",
+    "uiLibrary": "antd",
+    "style": {
+      "indentation": 2,
+      "quotes": "single",
+      "trailingComma": "all",
+      "semicolons": true,
+      "printWidth": 100
+    },
+    "componentPatterns": {
+      "useAppRouter": true,
+      "useServerComponents": true,
+      "preferHooks": true,
+      "customHooksPrefix": "use",
+      "componentSuffix": "Component"
+    },
+    "importOrder": [
+      "next/**",
+      "react",
+      "antd",
+      "@ant-design/**",
+      "@ant-design/pro-components",
+      "lucide-react",
+      "axios",
+      "lodash",
+      "classnames",
+      "moment",
+      "@/*",
+      "./**"
+    ]
+  },
+  "toolUsage": {
+    "build": {
+      "command": "npm run build",
+      "environment": "production"
+    },
+    "dev": {
+      "command": "npm run dev",
+      "environment": "development",
+      "port": 3000
+    },
+    "lint": {
+      "command": "npm run lint",
+      "include": ["src", "app"]
+    },
+    "format": {
+      "command": "npm run prettier"
+    },
+    "test": {
+      "command": "npm test",
+      "framework": "@testing-library/react"
+    },
+    "typeCheck": {
+      "command": "npm run tsc"
+    }
+  },
+  "architecture": {
+    "routing": {
+      "useAppRouter": true,
+      "appDir": "app",
+      "pagesDir": "src/pages",
+      "layoutStrategy": "nested"
+    },
+    "stateManagement": {
+      "client": "react-hooks",
+      "server": "next-cache",
+      "global": "react-context",
+      "recommended": "swr" 
+    },
+    "dataFetching": {
+      "client": "axios",
+      "server": "fetch",
+      "recommended": "async-await"
+    },
+    "styling": {
+      "solution": "antd-css-in-js",
+      "preprocessor": "less",
+      "variables": "@ant-design/css-variables"
+    },
+    "componentOrganization": {
+      "shared": "src/components",
+      "page": "app/[page]/components",
+      "layout": "src/layout",
+      "utils": "src/utils",
+      "hooks": "src/hooks",
+      "types": "src/types"
+    },
+    "api": {
+      "baseUrl": "process.env.NEXT_PUBLIC_API_URL",
+      "prefix": "/api",
+      "mock": "false"
+    }
+  },
+  "bestPractices": {
+    "performance": [
+      "use server components for data fetching",
+      "use client components only when necessary",
+      "implement proper caching with swr or next/cache",
+      "optimize images with next/image",
+      "code split with dynamic imports"
+    ],
+    "accessibility": [
+      "use semantic html",
+      "implement proper aria labels",
+      "ensure keyboard navigation",
+      "follow WCAG guidelines"
+    ],
+    "security": [
+      "sanitize user input",
+      "use secure cookies with HttpOnly",
+      "implement proper CORS configuration",
+      "avoid exposing sensitive data"
+    ],
+    "maintainability": [
+      "write comprehensive type definitions",
+      "use descriptive variable and function names",
+      "implement proper error handling",
+      "add comments for complex logic",
+      "follow single responsibility principle"
+    ]
+  },
+  "customRules": {
+    "namingConventions": {
+      "components": "PascalCase",
+      "functions": "camelCase",
+      "constants": "UPPER_CASE",
+      "types": "PascalCase",
+      "interfaces": "PascalCase",
+      "files": "kebab-case or PascalCase"
+    },
+    "commenting": {
+      "fileHeaders": true,
+      "functionComments": true,
+      "complexLogicComments": true,
+      "useJSDoc": true
+    },
+    "errorHandling": {
+      "useErrorBoundaries": true,
+      "handleAsyncErrors": true,
+      "showUserFriendlyMessages": true
+    },
+    "testing": {
+      "unitTests": true,
+      "integrationTests": true,
+      "coverageThreshold": 80
+    }
+  }
+}

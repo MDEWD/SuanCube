@@ -1,3 +1,5 @@
+'use client';
+
 import { Typography, Spin, Space, Grid } from 'antd';
 import { TeamOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';

@@ -1,18 +1,13 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** doPostFavour POST /api/post_favour/ */
 export async function doPostFavourUsingPost(
   body: API.PostFavourAddRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseInt_>('/api/post_favour/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponseInt_>('/api/post_favour/', body, {
     ...(options || {}),
   });
 }
@@ -22,12 +17,7 @@ export async function listFavourPostByPageUsingPost(
   body: API.PostFavourQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post_favour/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/post_favour/list/page', body, {
     ...(options || {}),
   });
 }
@@ -37,12 +27,7 @@ export async function listMyFavourPostByPageUsingPost(
   body: API.PostQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post_favour/my/list/page', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/post_favour/my/list/page', body, {
     ...(options || {}),
   });
 }

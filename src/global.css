@@ -38,7 +38,7 @@ ol {
 /* 全局移除 main 元素宽度限制 */
 .ant-layout-content {
   max-width: none !important;
-  // padding: 0 !important;
+  /* padding: 0 !important; */
   margin: 0 !important;
 }
 
@@ -46,15 +46,17 @@ ol {
   .ant-table {
     width: 100%;
     overflow-x: auto;
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
-        white-space: pre;
-        > span {
-          display: block;
-        }
-      }
-    }
+  }
+  .ant-table-thead > tr > th,
+  .ant-table-thead > tr > td,
+  .ant-table-tbody > tr > th,
+  .ant-table-tbody > tr > td {
+    white-space: pre;
+  }
+  .ant-table-thead > tr > th > span,
+  .ant-table-thead > tr > td > span,
+  .ant-table-tbody > tr > th > span,
+  .ant-table-tbody > tr > td > span {
+    display: block;
   }
 }

@@ -1,5 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { 
   CloudOutlined, 
   DatabaseOutlined, 
@@ -14,7 +17,7 @@ import {
   MenuOutlined
 } from '@ant-design/icons';
 import { Button, Popover, List, Tag, Typography, Drawer, Grid, Avatar } from 'antd';
-import { useModel } from '@umijs/max';
+
 import { AvatarDropdown } from '../RightContent/AvatarDropdown';
 import { userLogoutUsingPost } from '@/services/backend/userController';
 import { flushSync } from 'react-dom';
@@ -24,31 +27,47 @@ const { useBreakpoint } = Grid;
 
 const Header: React.FC = () => {
   const { Text } = Typography;
-  const navigate = useNavigate(); // 获取navigate对象用于路由跳转
+  const router = useRouter(); // 获取router对象用于路由跳转
   const [drawerVisible, setDrawerVisible] = useState(false);
   const screens = useBreakpoint();
   const isMobile = !screens.md;
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const { currentUser } = initialState || {};
+  // 简化的用户状态管理，从localStorage获取用户信息
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  // 从localStorage获取用户信息
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // 这里可以添加获取用户信息的逻辑
+      // 暂时使用mock数据
+      const mockUser = {
+        id: '1',
+        userName: '用户',
+        userAvatar: null,
+        userRole: 'USER',
+        createTime: new Date().toISOString(),
+        userProfile: '',
+        displayId: 'user1'
+      };
+      setCurrentUser(mockUser);
+    }
+  }, []);
   
   // 退出登录处理
   const handleLogout = async () => {
     try {
       await userLogoutUsingPost();
-      flushSync(() => {
-        setInitialState((s) => ({ ...s, currentUser: undefined }));
-      });
+      // 清除本地状态
+      setCurrentUser(null);
       localStorage.removeItem('token');
-      navigate('/user/login');
+      router.push('/login');
       setDrawerVisible(false);
     } catch (error) {
       console.error('退出登录失败:', error);
       // 即使API调用失败，也清除本地状态
-      flushSync(() => {
-        setInitialState((s) => ({ ...s, currentUser: undefined }));
-      });
+      setCurrentUser(null);
       localStorage.removeItem('token');
-      navigate('/user/login');
+      router.push('/login');
       setDrawerVisible(false);
     }
   };
@@ -92,7 +111,7 @@ const Header: React.FC = () => {
 
   // 处理导航项点击事件
   const handleNavClick = (path: string) => {
-    navigate(path);
+    router.push(path);
   };
 
   // 最新更新Popover内容
@@ -149,16 +168,15 @@ const Header: React.FC = () => {
         minHeight: '60px'
       }}>
         {/* Logo */}
-        <div style={{ display: 'flex', cursor: 'pointer', marginLeft: '28px' }}
+        <div style={{ display: 'flex', cursor: 'pointer', marginLeft: '28px', width: '150px', height: '48px' }}
          onClick={() => handleNavClick('/welcome')}
         >
-          <img 
+          <Image 
             src={logo} 
             alt="算立方" 
+            width={150} 
+            height={48} 
             style={{
-              height: '48px',
-              maxWidth: '150px',
-              // width: '240px',
               objectFit: 'contain'
             }}
           />
@@ -258,7 +276,7 @@ const Header: React.FC = () => {
               <Button 
                 type="primary" 
                 icon={<RightOutlined />}
-                onClick={() => navigate('/user/login')}
+                onClick={() => router.push('/login')}
                 style={{
                   background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)',
                   border: 'none',
@@ -352,7 +370,7 @@ const Header: React.FC = () => {
                 block
                 icon={<RightOutlined />}
                 onClick={() => {
-                  navigate('/user/login');
+                  router.push('/login');
                   setDrawerVisible(false);
                 }}
                 style={{

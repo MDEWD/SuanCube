@@ -1,3 +1,5 @@
+'use client';
+
 import { Typography, Row, Col, Card, Grid, Spin } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { getHotProductsUsingGet } from '@/services/backend/productController';

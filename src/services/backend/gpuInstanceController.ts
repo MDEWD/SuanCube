@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取GPU实例列表 POST /api/gpu-instance/list/page */
 export async function listGpuInstanceByPageUsingPost(
@@ -14,12 +14,7 @@ export async function listGpuInstanceByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/product/list', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/product/list', body, {
     ...(options || {}),
   });
 }
@@ -32,8 +27,7 @@ export async function getGpuInstanceByIdUsingGet(
   options?: { [key: string]: any },
 ) {
   const { id, ...rest } = params;
-  return request<API.BaseResponsePostVO_>(`/api/product/${id}`, {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePostVO_>(`/api/product/${id}`, {
     params: {
       ...rest,
     },

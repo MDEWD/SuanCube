@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react';
 import {
   Layout,
@@ -155,9 +156,10 @@ const CloudComputingCommunity: React.FC = () => {
         sortField: 'createTime',
         sortOrder: 'desc'
       });
-      if (res?.data?.records && res.data.records.length > 0) {
-        const posts = res.data.records.map((item: API.PostVO) => ({
-          id: item.id,
+      // API response structure: res = { data: { code: 0, message: "", data: { records: [], total: 0 } } }
+      if (res?.data?.data?.records && res.data.data.records.length > 0) {
+        const posts = res.data.data.records.map((item: API.PostVO) => ({
+          id: Number(item.id) || 0, // Ensure id is a number
           title: item.title || '',
           content: item.content || '',
           author: {

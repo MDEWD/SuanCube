@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import axiosInstance from '@/utils/axios';
 
 /** 获取产品列表 POST /api/product/list/page */
 export async function listProductByPageUsingPost(
@@ -12,12 +12,10 @@ export async function listProductByPageUsingPost(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/product/list/page', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponsePagePostVO_>('/api/product/list/page', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -30,8 +28,7 @@ export async function getProductByIdUsingGet(
   options?: { [key: string]: any },
 ) {
   const { id, ...rest } = params;
-  return request<API.BaseResponseProductVO_>(`/product/${id}`, {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponseProductVO_>(`/api/product/${id}`, {
     params: {
       ...rest,
     },
@@ -46,8 +43,7 @@ export async function getHotProductsUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePageResultProductVO_>('/product/hot', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePageResultProductVO_>('/api/product/hot', {
     params: {
       ...params,
     },
@@ -60,12 +56,10 @@ export async function publishProductUsingPost(
   body: API.ProductPublishRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseString_>('/product/publish', {
-    method: 'POST',
+  return axiosInstance.post<API.BaseResponseString_>('/api/product/publish', body, {
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -83,8 +77,7 @@ export async function getProductListUsingGet(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponsePageResultProductVO_>('/product/list', {
-    method: 'GET',
+  return axiosInstance.get<API.BaseResponsePageResultProductVO_>('/api/product/list', {
     params: {
       page: 1,
       size: 20,
